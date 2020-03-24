@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "714468681142",
+    "firebase_url": "https://se-smartpos.firebaseio.com",
+    "project_id": "se-smartpos",
+    "storage_bucket": "se-smartpos.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714468681142:android:ec97a529892d0f35ff4d17",
+        "android_client_info": {
+          "package_name": "com.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "714468681142-iistc5uu1kctqr87n0k5gk6nbroiua7o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mobile",
+            "certificate_hash": "0d79c9b415d272935215bce07b496d4856fd34f7"
+          }
+        },
+        {
+          "client_id": "714468681142-aqachjjbe3gqd8uu3spdl5iqbelm4plf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6SWP6nqIG7JnGZ-rkZLnN1hTq1XzcO1w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "714468681142-aqachjjbe3gqd8uu3spdl5iqbelm4plf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
