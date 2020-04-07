@@ -5,11 +5,13 @@ import {routes} from '../../constants/data.js'
 
 export default class RoutesScreen extends Component {
 
+  static navigationOptions  = ({navigation})=>{
 
+      // const{ params} = navigation.state;
+      return {
+        title: 'List of Routes',
+    };}
 
-//_onPressButton = (route_id )=>{
-//    alert('You press the button with route ID :'+route_id)
-//}
 
 renderButtons() {
        return  routes.map((route) => {
@@ -19,7 +21,7 @@ renderButtons() {
                                  style={styles.button}
                                  key={route.route_id}
 //                                 onPress={() => this.props.navigation.navigate('')}>
-                                   onPress= {()=>{alert('You press the button with route ID :'+route.route_id)}}>
+                                   onPress= {() => this.props.navigation.navigate('Route',{route_id : route.route_id , route_name:route.route_name})}>
                                  <Text style={styles.text}>{'Day '+route.day +' :  '+route.route_name}</Text>
 
                                </TouchableOpacity>
