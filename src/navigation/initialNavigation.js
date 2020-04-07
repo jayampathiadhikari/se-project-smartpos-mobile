@@ -10,6 +10,7 @@
 import React,{Component} from 'react';
 import {View} from 'react-native';
 import routesScreen from '../screens/routesScreen.js';
+import home from './index';
 import homeScreen from '../screens/homeScreen.js';
 import currentStockScreen from '../screens/currentStockScreen.js';
 import userAccountScreen from '../screens/userAccountScreen.js';

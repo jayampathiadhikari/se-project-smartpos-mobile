@@ -56,7 +56,6 @@ class Screen extends React.Component {
     }).catch(err => {
       console.warn(err);
     });
-
   }
   watchFirestore() {
     this.unsubscribe = firestore().collection('users/0001/18-03-2020')
