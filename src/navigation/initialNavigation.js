@@ -9,11 +9,10 @@
 
 import React,{Component} from 'react';
 import {View} from 'react-native';
-import routesScreen from './screens/routesListScreen.js';
-import RouteHomeScreen from './screens/routeHomeScreen.js';
-import homeScreen from './screens/homeScreen.js';
-import currentStockScreen from './screens/currentStockScreen.js';
-import userAccountScreen from './screens/userAccountScreen.js';
+import routesScreen from '../screens/routesScreen.js';
+import homeScreen from '../screens/homeScreen.js';
+import currentStockScreen from '../screens/currentStockScreen.js';
+import userAccountScreen from '../screens/userAccountScreen.js';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';

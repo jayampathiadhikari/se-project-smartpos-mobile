@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
 import {Button, Card} from 'react-native-elements';
 import { Text, View, ScrollView,TouchableOpacity, StyleSheet } from 'react-native';
-import {routes} from '../../constants/data.js'
+import {routes} from '../constants/data.js'
 
 export default class RoutesScreen extends Component {
 
