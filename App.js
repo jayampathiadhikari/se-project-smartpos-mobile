@@ -1,22 +1,12 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-//yarn add react-native-vector-icons
+import React,{Component} from 'react';
+import Navigation from './src/navigation/initialNavigation.js'
 
-import React from 'react';
-//import Entrypoint from "./src/entrypoint";
-import BottomTabNavigation from './src/navigation/initialNavigation.js';
-import {View} from 'react-native';
 
-const App: () => React$Node = () => {
-  return (
-    <BottomTabNavigation />
+export default class RoutesScreen extends Component {
 
-  );
-};
-
-export default App;
+ render() {
+    return (
+    <Navigation />
+    );
+  }
+}
