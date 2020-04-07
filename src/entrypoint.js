@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/es/integration/react';
-import Navigator from './navigation';
+import Navigator from './navigation/initialNavigation';
 import { store, persistor } from './store/storeConfiguration';
 
 export default class Entrypoint extends Component {

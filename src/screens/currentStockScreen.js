@@ -16,7 +16,8 @@ export default class Table extends Component {
     renderRow() {
         return (
             <View style={{ flex: 1, alignSelf: 'stretch', flexDirection: 'row' }}>
-                <View style={{ flex: 1, alignSelf: 'stretch' }} /> { /* Edit these as they are your cells. You may even take parameters to display different data / react elements etc. */}
+                {/*Edit these as they are your cells. You may even take parameters to display different data / react elements etc.*/}
+                <View style={{ flex: 1, alignSelf: 'stretch' }} />
                 <View style={{ flex: 1, alignSelf: 'stretch' }} />
                 <View style={{ flex: 1, alignSelf: 'stretch' }} />
                 <View style={{ flex: 1, alignSelf: 'stretch' }} />
