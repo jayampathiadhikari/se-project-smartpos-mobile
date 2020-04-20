@@ -15,33 +15,25 @@ export default class RoutesScreen extends Component {
 
 renderButtons() {
        return  routes.map((route) => {
-                     return (
+         return (
+         <TouchableOpacity style={styles.button} key={route.route_id}
+               onPress= {() => this.props.navigation.navigate('Route',{route_id : route.route_id , route_name:route.route_name})}>
+               <Text style={styles.text}>{'Day '+route.day +' :  '+route.route_name}</Text>
+         </TouchableOpacity>
 
-                     <TouchableOpacity
-                                 style={styles.button}
-                                 key={route.route_id}
-//                                 onPress={() => this.props.navigation.navigate('')}>
-                                   onPress= {() => this.props.navigation.navigate('Route',{route_id : route.route_id , route_name:route.route_name})}>
-                                 <Text style={styles.text}>{'Day '+route.day +' :  '+route.route_name}</Text>
-
-                               </TouchableOpacity>
-
-                );})
+        );})
 }
 
 
 
   render() {
     return (
-//      <View style={styles.MainContainer}>
-
-
         <ScrollView >
             <View style={styles.MainContainer}>
-                < Text style={{ marginTop: 30, fontSize: 18 , fontFamily: 'Roboto'}}>The routes assigned to you .</Text>
+                < Text style={{ marginTop: 20, fontSize: 18 , fontFamily: 'Roboto'}}>The routes assigned to you .</Text>
 
                 {this.renderButtons()}
-                </View>
+            </View>
         </ScrollView>
   );}
 }
@@ -60,8 +52,9 @@ const styles = StyleSheet.create({
 
   button: {
     alignItems: 'center',
-    backgroundColor: '#29a4e7',
+    backgroundColor: '#474747',
     padding: 12,
+    borderRadius:5,
     width: 280,
     marginTop: 12,
   },
