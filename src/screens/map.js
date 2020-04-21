@@ -29,26 +29,49 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5FCFF"
   },
   container: {
-    height: windowHeight-100,
+    height: windowHeight,
     width: windowWidth,
     backgroundColor: "tomato"
   },
   map: {
     flex: 1
+  },
+  icon: {
+    position: 'absolute',
+    top:80,
+    left: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex:9999
   }
 });
 
 class ShowMap extends React.Component {
   componentDidMount() {
+    MapboxGL.setTelemetryEnabled(false);
   }
   onLocationUpdate = (location) => {
     console.log('LOCATION MAPBOX')
+  };
+
+  onPress = () => {
+    this.props.navigation.toggleDrawer();
   };
 
   render() {
     return (
       <View style={styles.page}>
         <View style={styles.container}>
+          <View style={styles.icon}>
+            <Icon
+              name="ios-menu"
+              type='ionicon'
+              color='#517fa4'
+              size={32}
+              raised={true}
+              onPress={()=>{this.onPress()}}
+            />
+          </View>
           <MapboxGL.MapView style={styles.map}>
             <MapboxGL.UserLocation
               visible={true}
