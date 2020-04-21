@@ -13,11 +13,12 @@ import routesScreen from '../screens/routesScreen.js';
 import home from './index';
 import homeScreen from '../screens/homeScreen.js';
 import currentStockScreen from '../screens/currentStockScreen.js';
+import map from '../screens/map.js';
 import userAccountScreen from '../screens/userAccountScreen.js';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
-
+import FlyTo from "../screens/FlyTo";
 
 const TabNavigator= createBottomTabNavigator(
   {
@@ -40,7 +41,7 @@ const TabNavigator= createBottomTabNavigator(
         }
     },
     Stock: {
-        screen: currentStockScreen ,
+        screen: map ,
         navigationOptions:{
           tabBarLabel:'Stock',
           tabBarIcon:({tintColor})=>(
