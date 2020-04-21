@@ -29,20 +29,33 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5FCFF"
   },
   container: {
-    height: windowHeight-100,
+    height: windowHeight-130,
     width: windowWidth,
-    backgroundColor: "tomato"
+    backgroundColor: "red"
   },
   map: {
     flex: 1
+  },
+  icon: {
+    position: 'absolute',
+    top:80,
+    left: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex:9999
   }
 });
 
 class ShowMap extends React.Component {
   componentDidMount() {
+    MapboxGL.setTelemetryEnabled(false);
   }
   onLocationUpdate = (location) => {
     console.log('LOCATION MAPBOX')
+  };
+
+  onPress = () => {
+    this.props.navigation.toggleDrawer();
   };
 
   render() {
