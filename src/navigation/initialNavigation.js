@@ -8,7 +8,7 @@
 
 
 import React, {Component} from 'react';
-import {Dimensions, TouchableHighlight, TouchableOpacity, View, TouchableNativeFeedback} from 'react-native';
+import {Dimensions, TouchableHighlight, View} from 'react-native';
 import routesListScreen from '../screens/routesListScreen.js';
 import routeHomeScreen from '../screens/routeHomeScreen.js';
 import homeScreen from '../screens/homeScreen.js';
@@ -24,9 +24,10 @@ import {createBottomTabNavigator} from 'react-navigation-tabs';
 import {createStackNavigator} from 'react-navigation-stack';
 import {createMaterialTopTabNavigator} from 'react-navigation-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
+import DrawerMenu from '../navigation/drawerMenu';
 import FlyTo from "../screens/FlyTo";
 import {createDrawerNavigator} from "react-navigation-drawer";
-import TouchableRipple from "react-native-paper/src/components/TouchableRipple/index.native";
+
 
 const shopTopNavigator = createMaterialTopTabNavigator({
   Details: {
@@ -69,7 +70,7 @@ const DrawerNav = createDrawerNavigator({
   },
   {
     initialRouteName: 'Map',
-    //contentComponent: props => <DrawerMenu {...props} />,
+    contentComponent: props => <DrawerMenu {...props} />,
     edgeWidth: (Dimensions.get('window').width / 2),
   });
 
@@ -80,10 +81,10 @@ DrawerNav.navigationOptions = ({navigation}) => {
     headerTitle: navigation.getParam('route_name'),
     headerRight: () => (
       <View style={{right: 20}}>
-        <TouchableHighlight onPress={() => {
-          navigation.toggleDrawer();
-        }} style={{width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center'}}
-                            underlayColor={'rgba(214,214,214,0.27)'} activeOpacity={1}>
+        <TouchableHighlight
+          onPress={() => {navigation.toggleDrawer();}}
+          style={{width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center'}}
+          underlayColor={'rgba(214,214,214,0.27)'} activeOpacity={1}>
           <Icon
             name="ios-menu"
             type='ionicon'
