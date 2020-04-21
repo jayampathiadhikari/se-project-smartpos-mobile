@@ -9,16 +9,75 @@
 
 import React,{Component} from 'react';
 import {View} from 'react-native';
-import routesScreen from '../screens/routesScreen.js';
-import home from './index';
+import routesListScreen from '../screens/routesListScreen.js';
+import routeHomeScreen from '../screens/routeHomeScreen.js';
 import homeScreen from '../screens/homeScreen.js';
 import currentStockScreen from '../screens/currentStockScreen.js';
 import map from '../screens/map.js';
 import userAccountScreen from '../screens/userAccountScreen.js';
+import salesDetailsScreen from '../screens/salesDetailsScreen.js';
+import shopDetailsScreen from '../screens/shopDetailsScreen.js';
+import cashDrawerScreen from '../screens/cashDrawerScreen.js';
+import generateInvoiceScreen from '../screens/generateInvoiceScreen.js';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { createStackNavigator } from 'react-navigation-stack';
+import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FlyTo from "../screens/FlyTo";
+
+const shopTopNavigator =createMaterialTopTabNavigator({
+    Details :{
+        screen : shopDetailsScreen,
+        navigationOptions: {
+              title: 'Details',
+        },
+    },
+    Sales : {
+        screen : salesDetailsScreen,
+        navigationOptions: {
+          title: 'Sales',
+        },
+    },
+    New_Invoice : {
+        screen : generateInvoiceScreen,
+        navigationOptions: {
+              title: 'New Invoice',
+        },
+    },
+    Cash_drawer : {
+        screen : cashDrawerScreen,
+        navigationOptions: {
+              title: 'Cash Drawer',
+        },
+    }
+},{
+tabBarOptions: { indicatorStyle: { backgroundColor: "#ffffff" } }
+//defaultNavigationOptions:{
+//    activeColor: '#f0edf6',
+//            inactiveColor: '#3e2465',
+//            barStyle: { backgroundColor: '#694fad' },
+//
+//}
+
+});
+
+
+
+const routesStackNavigator =createStackNavigator(
+    {
+        RoutesList:routesListScreen,
+        Route:routeHomeScreen,
+        ShopHome : shopTopNavigator,
+
+    },{
+            initialRouteName: 'RoutesList',
+            defaultNavigationOptions :{
+                headerTitleAlign : 'center'
+            }
+
+    }
+);
 
 const TabNavigator= createBottomTabNavigator(
   {
@@ -32,7 +91,7 @@ const TabNavigator= createBottomTabNavigator(
         }
      },
     Routes: {
-        screen: routesScreen,
+        screen: routesStackNavigator,
         navigationOptions:{
           tabBarLabel:'Routes',
           tabBarIcon:({tintColor})=>(
