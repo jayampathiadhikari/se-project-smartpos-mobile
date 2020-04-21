@@ -29,9 +29,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5FCFF"
   },
   container: {
-    height: windowHeight,
+    height: windowHeight-130,
     width: windowWidth,
-    backgroundColor: "tomato"
+    backgroundColor: "red"
   },
   map: {
     flex: 1
@@ -62,16 +62,6 @@ class ShowMap extends React.Component {
     return (
       <View style={styles.page}>
         <View style={styles.container}>
-          <View style={styles.icon}>
-            <Icon
-              name="ios-menu"
-              type='ionicon'
-              color='#517fa4'
-              size={32}
-              raised={true}
-              onPress={()=>{this.onPress()}}
-            />
-          </View>
           <MapboxGL.MapView style={styles.map}>
             <MapboxGL.UserLocation
               visible={true}

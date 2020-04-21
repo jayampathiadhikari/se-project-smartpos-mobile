@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {View, Text, ScrollView, Image} from 'react-native';
-import {Button, Icon, ListItem} from 'react-native-elements';
-
+import {View, ScrollView, Image} from 'react-native';
+import {Icon, ListItem} from 'react-native-elements';
+import Map from './map'
 
 const list = [
   {
@@ -42,45 +42,14 @@ export default class RouteHomeScreen extends Component {
           />
         </View>
       ),
+      drawerLockMode: 'locked-open'
     }
-  };
-
-  getShopsList = () => {
-    return (
-      <ScrollView contentContainerStyle={{flexGrow: 1}}>
-        {list.map((item, i) =>
-          (
-            <ListItem
-              key={i}
-              title={item.shop_name}
-              //                      chevronColor={'red'}
-              chevron
-              containerStyle={{
-                backgroundColor: '#343740',
-                margin: 5,
-                borderTopLeftRadius: 3,
-                borderTopRightRadius: 3,
-              }}
-              onPress={() => {
-                this.props.navigation.navigate('ShopHome', {shop_id: item.shop_id, shop_name: item.shop_name});
-              }}
-              titleStyle={{color: 'white'}}
-            />
-          ),
-        )}
-      </ScrollView>
-    );
-
   };
 
   render() {
     return (
-      <View style={{flex: 1, flexDirection: 'column', padding: 10}}>
-        <Image
-          source={require('./map.jpg')}
-          style={{width: 390, height: 300}}
-        />
-        {this.getShopsList()}
+      <View style={{flex: 1, flexDirection: 'column'}}>
+        <Map/>
       </View>
     );
   }
