@@ -84,10 +84,9 @@ export default class HomeScreen extends Component {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
         {
-          title: 'Cool Photo App Camera Permission',
+          title: 'Location Permission',
           message:
-            'Cool Photo App needs access to your camera ' +
-            'so you can take awesome pictures.',
+            'This App needs access to your location ',
           buttonNeutral: 'Ask Me Later',
           buttonNegative: 'Cancel',
           buttonPositive: 'OK',
