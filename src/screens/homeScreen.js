@@ -1,13 +1,17 @@
 import React , {Component} from 'react';
-import { Text, View, TouchableOpacity, StyleSheet, PermissionsAndroid } from 'react-native';
-import { Image } from 'react-native-elements';
+import { Text, View, TouchableOpacity, StyleSheet, PermissionsAndroid ,Modal} from 'react-native';
+import { Image ,Button} from 'react-native-elements';
 import {connect} from 'react-redux';
 import Geolocation from 'react-native-geolocation-service';
 import firestore from '@react-native-firebase/firestore';
 
 export default class HomeScreen extends Component {
+
   state = {
-    entryCreated : 1
+    entryCreated : 1,
+
+    dailyTarget : 8000,
+    modalVisible:false,
   };
   componentDidMount() {
     // Instead of navigator.geolocation, just use Geolocation.
@@ -105,10 +109,19 @@ export default class HomeScreen extends Component {
     }
   };
 
+
+  openModal(){
+    this.setState({modalVisible:true});
+  };
+
+  closeModal(){
+    this.setState({modalVisible:false});
+  }
+
   render() {
     return (
       <View style={styles.MainContainer}>
-        <Text style={{ marginTop: 40, fontSize: 40 , fontFamily: 'Roboto'}}>ZENARUS</Text>
+        <Text style={{ marginTop: 40, fontSize: 40 , fontFamily: 'notoserif' ,fontWeight:'bold'}}>ZENARUS</Text>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Image
               source={ require('./home2.jpg') }
@@ -116,10 +129,27 @@ export default class HomeScreen extends Component {
             />
           <TouchableOpacity
             style={styles.button}
-            onPress={() => this.props.navigation.navigate('')}>
+            onPress={() => this.openModal()}>
             <Text style={styles.text}>View the Daily Target</Text>
           </TouchableOpacity>
+
         </View>
+
+          <Modal animationType="fade" transparent={true} visible={this.state.modalVisible}>
+              <View style={modalstyles.centeredView}>
+                <View style={modalstyles.modalView}>
+                  <Text style={modalstyles.modalText}> Target assigned on {new Date().getDate() + '/' + new Date().getMonth() + '/' + new Date().getFullYear()} : </Text>
+                  <Text style = {{...modalstyles.modalText , fontWeight: 'bold'}}>Rs. {this.state.dailyTarget}</Text>
+                  <Button title = 'Back'  buttonStyle={modalstyles.closeButton} onPress={() => {this.closeModal();}}/>
+
+
+                </View>
+              </View>
+           </Modal>
+
+
+
+
       </View>
     );
   }
@@ -143,11 +173,55 @@ const styles = StyleSheet.create({
     padding: 12,
     width: 280,
     marginTop: 12,
+    borderRadius : 30
   },
 
   text: {
-
+    fontSize: 17,
+    fontWeight:'600',
     color: '#fff'
   }
 
 });
+
+
+
+
+const modalstyles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 10,
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
+  },
+  closeButton: {
+    borderRadius: 10,
+    padding: 10,
+    elevation: 2,
+    margin:10,
+    width : 100
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    fontSize :17,
+    marginBottom: 6,
+    textAlign: "center"
+  },
+});
+
