@@ -19,7 +19,7 @@ import salesDetailsScreen from '../screens/salesDetailsScreen.js';
 import shopDetailsScreen from '../screens/shopDetailsScreen.js';
 import cashDrawerScreen from '../screens/cashDrawerScreen.js';
 import generateInvoiceScreen from '../screens/generateInvoiceScreen.js';
-import {createAppContainer} from 'react-navigation';
+import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import {createStackNavigator} from 'react-navigation-stack';
 import {createMaterialTopTabNavigator} from 'react-navigation-tabs';
@@ -27,7 +27,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import DrawerMenu from '../navigation/drawerMenu';
 import FlyTo from "../screens/FlyTo";
 import {createDrawerNavigator} from "react-navigation-drawer";
-
+import loginScreen from "../screens/login";
+import authLoadingScreen from "../screens/authLoadingScreen";
 
 const shopTopNavigator = createMaterialTopTabNavigator({
   Details: {
@@ -158,7 +159,18 @@ const TabNavigator = createBottomTabNavigator(
   }
 );
 
-const AppContainer = createAppContainer(TabNavigator);
+
+const switchNav = createSwitchNavigator(
+  {
+    Auth: authLoadingScreen,
+    Login: loginScreen,
+    Home: TabNavigator,
+  },{
+    initialRouteName:'Auth'
+  }
+);
+
+const AppContainer = createAppContainer(switchNav);
 
 export default class Navigation extends Component {
   render() {

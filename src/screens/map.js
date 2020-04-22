@@ -8,13 +8,9 @@
  */
 
 import React from 'react';
-import {View, Text, FlatList, StyleSheet, TouchableOpacity, useWindowDimensions, Dimensions} from 'react-native';
-import {Icon} from 'react-native-elements';
-import PropTypes from 'prop-types';
+import {View, StyleSheet, Dimensions} from 'react-native';
 import MapboxGL from "@react-native-mapbox-gl/maps";
-
 export const ACCESS_KEY= `pk.eyJ1IjoiamF5YW1wYXRoaSIsImEiOiJjazd3NTFhbngwMG44M2xucTU4bzl4azF4In0.DQhkwC9bVwzcVYhaZf1aVw`;
-
 
 MapboxGL.setAccessToken(ACCESS_KEY);
 
@@ -52,10 +48,6 @@ class ShowMap extends React.Component {
   }
   onLocationUpdate = (location) => {
     console.log('LOCATION MAPBOX')
-  };
-
-  onPress = () => {
-    this.props.navigation.toggleDrawer();
   };
 
   render() {
