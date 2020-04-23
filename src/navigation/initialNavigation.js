@@ -132,7 +132,7 @@ const TabNavigator = createBottomTabNavigator(
       }
     },
     Stock: {
-      screen: DrawerNav,
+      screen: currentStockScreen,
       navigationOptions: {
         tabBarLabel: 'Stock',
         tabBarIcon: ({tintColor}) => (
