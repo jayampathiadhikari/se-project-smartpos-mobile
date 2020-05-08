@@ -17,6 +17,40 @@ MapboxGL.setAccessToken(ACCESS_KEY);
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
+class ShowMap extends React.Component {
+
+  componentDidMount() {
+    MapboxGL.setTelemetryEnabled(false);
+  }
+
+  // onLocationUpdate = (location) => {
+  //   console.log('LOCATION MAPBOX')
+  // };
+
+  render() {
+    return (
+      <View style={styles.page}>
+        <View style={styles.container}>
+          <MapboxGL.MapView style={styles.map}>
+            <MapboxGL.UserLocation
+              visible={true}
+              showsUserHeadingIndicator={true}
+              // onUpdate={this.onLocationUpdate}
+            />
+            <MapboxGL.Camera
+              zoomLevel={5}
+              animationMode={'flyTo'}
+              animationDuration={6000}
+              followUserMode={'normal'}
+              followUserLocation
+              followZoomLevel={14}
+            />
+          </MapboxGL.MapView>
+        </View>
+      </View>
+    )
+  }
+}
 const styles = StyleSheet.create({
   page: {
     flex: 1,
@@ -41,38 +75,4 @@ const styles = StyleSheet.create({
     zIndex:9999
   }
 });
-
-class ShowMap extends React.Component {
-  componentDidMount() {
-    MapboxGL.setTelemetryEnabled(false);
-  }
-  onLocationUpdate = (location) => {
-    console.log('LOCATION MAPBOX')
-  };
-
-  render() {
-    return (
-      <View style={styles.page}>
-        <View style={styles.container}>
-          <MapboxGL.MapView style={styles.map}>
-            <MapboxGL.UserLocation
-              visible={true}
-              showsUserHeadingIndicator={true}
-              onUpdate={this.onLocationUpdate}
-            />
-            <MapboxGL.Camera
-              zoomLevel={5}
-              animationMode={'flyTo'}
-              animationDuration={6000}
-              followUserMode={'normal'}
-              followUserLocation
-              followZoomLevel={14}
-            />
-          </MapboxGL.MapView>
-        </View>
-      </View>
-    )
-  }
-}
-
 export default ShowMap;

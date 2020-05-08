@@ -4,48 +4,53 @@ import { Image ,Button} from 'react-native-elements';
 import {connect} from 'react-redux';
 import Geolocation from 'react-native-geolocation-service';
 import firestore from '@react-native-firebase/firestore';
+import {setUser} from "../store/reducers/authentication/action";
 
-export default class HomeScreen extends Component {
+class HomeScreen extends Component {
 
   state = {
     entryCreated : 1,
-
     dailyTarget : 8000,
     modalVisible:false,
   };
+
   componentDidMount() {
-    // Instead of navigator.geolocation, just use Geolocation.
-    this.getGeoLocation();
+    console.log(this.props.user.email,'USER');
+    this.getInitialPosition();
     this.watchMovement();
-    this.watchFirestore();
-    // const ts = new Date();
-    // const today = ts.toISOString().split('T')[0];
-    //this.updateLocationDetails();
-    //this.getLocationDetails(today);
+    // this.watchFirestore();
   };
+
   componentWillUnmount(): void {
     //Geolocation.clearWatch(this.watchID);
     //add unscubcribe to prevent data fetch from firebsae
-    this.unsubscribe();
+    // this.unsubscribe();
   };
+
   async getLocationDetails(date){
     firestore().collection(`users/userid/03-08-2020`).get().then(querySnap => {
       const documentData = querySnap.docs.map(doc => doc.data());
       console.log('DOCUMENT DATA', documentData)
     })
   };
+
   async updateLocationDetails(ts,geoPoint){
-    const userid = '0001';
-    const docRef = firestore().collection('users').doc(userid);
-    docRef.collection('07-04-2020').add({time:ts,location:geoPoint});
-    console.log(docRef);
+    console.log(ts,geoPoint,'LOCATION UPDATED')
+    const userid = this.props.user.uid;
+    const date = new Date();
+    const dateString = date.toISOString().split('T')[0];
+    const docRef = firestore().collection('userTravel').doc(userid);
+    docRef.collection(dateString).add({time:ts,location:geoPoint});
+    // console.log(docRef);
   };
-  getGeoLocation() {
+
+  getInitialPosition() {
+    //this is a one time thing
     this.requestLocationPermission().then(hasLocationPermission => {
       if (hasLocationPermission) {
         Geolocation.getCurrentPosition(
           (position) => {
-            console.log(position)
+            console.log('CURRENT POSITION',position)
           },
           (error) => {
             // See error code charts below.
@@ -58,6 +63,7 @@ export default class HomeScreen extends Component {
       console.warn(err);
     });
   };
+
   watchFirestore() {
     this.unsubscribe = firestore().collection('users/0001/18-03-2020')
       .onSnapshot({
@@ -65,6 +71,7 @@ export default class HomeScreen extends Component {
         next: (querySnapshot) => {console.log(querySnapshot.size)},
       });
   };
+
   watchMovement() {
     //we use 10s gap for location updates
     this.watchID = Geolocation.watchPosition((lastPosition) => {
@@ -72,17 +79,17 @@ export default class HomeScreen extends Component {
         const geoPoint = new firestore.GeoPoint(lastPosition.coords.latitude, lastPosition.coords.longitude);
         console.log(geoPoint);
         this.updateLocationDetails(ts,geoPoint);
-
       }, (err => {
         console.log(err)
       }),
       {
-        enableHighAccuracy: true,
+        enableHighAccuracy: false,
         distanceFilter: 0,
-        interval: 10000,
-        fastestInterval: 10000,
+        interval: 30000,
+        fastestInterval: 5000,
       } );
   };
+
   async requestLocationPermission() {
     try {
       const granted = await PermissionsAndroid.request(
@@ -141,19 +148,27 @@ export default class HomeScreen extends Component {
                   <Text style={modalstyles.modalText}> Target assigned on {new Date().getDate() + '/' + new Date().getMonth() + '/' + new Date().getFullYear()} : </Text>
                   <Text style = {{...modalstyles.modalText , fontWeight: 'bold'}}>Rs. {this.state.dailyTarget}</Text>
                   <Button title = 'Back'  buttonStyle={modalstyles.closeButton} onPress={() => {this.closeModal();}}/>
-
-
                 </View>
               </View>
            </Modal>
-
-
-
-
       </View>
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  user : state.AuthenticationReducer.user,
+});
+
+const bindAction = (dispatch) => ({
+  setUser: (user) => dispatch(setUser(user)),
+});
+
+export default connect(
+  mapStateToProps,
+  bindAction
+)(HomeScreen);
+
 
 const styles = StyleSheet.create({
 

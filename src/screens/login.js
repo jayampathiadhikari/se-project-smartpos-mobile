@@ -1,7 +1,9 @@
 import React from 'react';
 import {View, StyleSheet, ActivityIndicator, Dimensions} from 'react-native';
 import { Input,Icon, Button, Image  } from 'react-native-elements';
-
+import auth from '@react-native-firebase/auth';
+import {connect} from "react-redux";
+import {setUser} from "../store/reducers/authentication/action";
 
 class Login extends React.Component{
   state = {
@@ -14,9 +16,22 @@ class Login extends React.Component{
       this.props.navigation.navigate('Home')
     }
   };
-  checkForAuthentication = (email,pw) => {
-    return true;
-  }
+
+  checkForAuthentication = async () => {
+    console.log('AUTHENTICATION');
+    try{
+      // const user = await auth().signInWithEmailAndPassword(this.state.email,this.state.password)
+      const user = await auth().signInWithEmailAndPassword('salesp@mailcupp.com','Password123#')
+      console.log(user.user)
+      if (user != null){
+        this.props.setUser(user.user);
+        this.props.navigation.navigate('Home')
+      }
+    }catch(e){
+      console.log(e)
+    }
+  };
+
   render(){
     return(
       <View style={styles.root}>
@@ -68,7 +83,7 @@ class Login extends React.Component{
             />}
             buttonStyle={styles.button}
             titleStyle={styles.title}
-            onPress={this.onPress}
+            onPress={this.checkForAuthentication}
             />
         </View>
       </View>
@@ -77,7 +92,22 @@ class Login extends React.Component{
   }
 }
 
-export default Login;
+const mapStateToProps = (state) => ({
+
+});
+
+const bindAction = (dispatch) => ({
+  setUser: (user) => dispatch(setUser(user)),
+});
+
+export default connect(
+  mapStateToProps,
+  bindAction
+)(Login);
+
+
+
+
 const styles =  StyleSheet.create({
   root: {
     flex:1,
