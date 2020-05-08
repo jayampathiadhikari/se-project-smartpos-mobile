@@ -93,24 +93,24 @@ export default class SalesDetails extends Component {
         </Table>
 
         <Modal animationType="fade" transparent={true} visible={state.updateDueAmountModalVisible}>
-            <View style={modalstyles.centeredView}>
-              <View style={modalstyles.modalView}>
-                <Text style={modalstyles.modalText}>Invoice Id : {state.invoiceToUpdate.id} </Text>
-                <Text style={modalstyles.modalText}>Due Amount : Rs. {state.invoiceToUpdate.due} </Text>
-                <Input
-                  placeholder='  Amount Received'
-                  errorStyle={{ color: 'red' ,textAlign:'center'}}
-                  errorMessage='Update cannot be rolled back'
-                  onChangeText ={(amount)=>{this.setDueAmount(amount,state.invoiceToUpdate.due)}}
-                />
+                             <View style={modalstyles.centeredView}>
+                               <View style={modalstyles.modalView}>
+                                 <Text style={modalstyles.modalText}>Invoice Id : {state.invoiceToUpdate.id} </Text>
+                                 <Text style={modalstyles.modalText}>Due Amount : Rs. {state.invoiceToUpdate.due} </Text>
+                                 <Input
+                                   placeholder='  Amount Received'
+                                   errorStyle={{ color: 'red' ,textAlign:'center'}}
+                                   errorMessage='Update cannot be rolled back'
+                                   onChangeText ={(amount)=>{this.setDueAmount(amount,state.invoiceToUpdate.due)}}
+                                 />
 
-                <Button title='Update' buttonStyle={{...modalstyles.openButton , backgroundColor:"#af0810"}}  onPress={()=>{this.updateDueAmount()}}/>
-                <Button title = 'Cancel'  buttonStyle={modalstyles.openButton} onPress={() => {this.closeDeuAmountModal();}}/>
+                                 <Button title='Update' buttonStyle={{...modalstyles.openButton , backgroundColor:"#af0810"}}  onPress={()=>{this.updateDueAmount()}}/>
+                                 <Button title = 'Cancel'  buttonStyle={modalstyles.openButton} onPress={() => {this.closeDeuAmountModal();}}/>
 
 
-              </View>
-            </View>
-         </Modal>
+                               </View>
+                             </View>
+                          </Modal>
     </ScrollView>
 
        )}}

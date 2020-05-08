@@ -7,7 +7,7 @@ export default class cashDrawersScreen extends React.Component {
   constructor(props){
     super(props);
     this.state ={
-        dueAmount : 100
+        dueAmount : '10 000'
     }
   }
 
