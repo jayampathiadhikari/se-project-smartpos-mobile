@@ -10,14 +10,9 @@ export default class HomeScreen extends Component {
     entryCreated : 1
   };
   componentDidMount() {
-    // Instead of navigator.geolocation, just use Geolocation.
     this.getGeoLocation();
     this.watchMovement();
     this.watchFirestore();
-    // const ts = new Date();
-    // const today = ts.toISOString().split('T')[0];
-    //this.updateLocationDetails();
-    //this.getLocationDetails(today);
   };
   componentWillUnmount(): void {
     //Geolocation.clearWatch(this.watchID);
