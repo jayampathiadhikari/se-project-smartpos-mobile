@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import Geolocation from 'react-native-geolocation-service';
 import firestore from '@react-native-firebase/firestore';
 import {setUser} from "../store/reducers/authentication/action";
+import {jsonObject} from "../constants/simulation";
 
 class HomeScreen extends Component {
 
@@ -16,22 +17,10 @@ class HomeScreen extends Component {
 
   componentDidMount() {
     console.log(this.props.user.email,'USER');
-    this.getInitialPosition();
-    this.watchMovement();
+    // this.getInitialPosition();
+    // this.watchMovement();
+    this.simulation()
     // this.watchFirestore();
-  };
-
-  componentWillUnmount(): void {
-    //Geolocation.clearWatch(this.watchID);
-    //add unscubcribe to prevent data fetch from firebsae
-    // this.unsubscribe();
-  };
-
-  async getLocationDetails(date){
-    firestore().collection(`users/userid/03-08-2020`).get().then(querySnap => {
-      const documentData = querySnap.docs.map(doc => doc.data());
-      console.log('DOCUMENT DATA', documentData)
-    })
   };
 
   async updateLocationDetails(ts,geoPoint){
@@ -42,6 +31,18 @@ class HomeScreen extends Component {
     const docRef = firestore().collection('userTravel').doc(userid);
     docRef.collection(dateString).add({time:ts,location:geoPoint});
     // console.log(docRef);
+  };
+
+  simulation = () => {
+    jsonObject.coordinates.forEach((coord,index)=>{
+      const geoPoint = new firestore.GeoPoint(coord[1], coord[0]);
+      setTimeout(async()=>{
+        const ts = new Date();
+        await this.updateLocationDetails(ts,geoPoint)
+        console.log('DATA UPLOADED')
+      },10000*index)
+    })
+
   };
 
   getInitialPosition() {
@@ -64,14 +65,6 @@ class HomeScreen extends Component {
     });
   };
 
-  watchFirestore() {
-    this.unsubscribe = firestore().collection('users/0001/18-03-2020')
-      .onSnapshot({
-        error: (e) => console.error(e),
-        next: (querySnapshot) => {console.log(querySnapshot.size)},
-      });
-  };
-
   watchMovement() {
     //we use 10s gap for location updates
     this.watchID = Geolocation.watchPosition((lastPosition) => {
@@ -85,7 +78,7 @@ class HomeScreen extends Component {
       {
         enableHighAccuracy: false,
         distanceFilter: 0,
-        interval: 30000,
+        interval: 10000,
         fastestInterval: 5000,
       } );
   };
