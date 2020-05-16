@@ -1,15 +1,40 @@
 import React,{Component} from 'react';
 import {View,Text,TouchableOpacity} from 'react-native';
 import {Button} from 'react-native-elements';
+const axios = require('axios');
 
 export default class cashDrawersScreen extends React.Component {
 
-  constructor(props){
-    super(props);
-    this.state ={
-        dueAmount : '10 000'
-    }
-  }
+    state ={
+        dueAmount : 0
+    };
+
+
+    componentDidMount(){
+        this.interval = setInterval(this.getInvoiceDetails, 20000);
+    };
+
+     getInvoiceDetails=()=>{
+             axios.post("https://se-smartpos-backend.herokuapp.com/invoice/viewallinvoices",
+             {shop_id:14})
+            .then( (response)=> {
+                if (response.data.success){
+                   let amount=0
+                   response.data.data.map((invoice)=>{
+                        amount+=invoice.invoice_value-invoice.paid_amount;
+                   });
+                   this.setState({dueAmount: amount});
+                }
+
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+     };
+
+    componentWillUnmount() {
+           clearInterval(this.intervalID);
+       }
 
   render() {
     const state=this.state;

@@ -1,51 +1,82 @@
 import React,{Component} from 'react';
-import {View,Text} from 'react-native';
+import {View,Text,ScrollView} from 'react-native';
 import { DataTable } from 'react-native-paper';
+const axios = require('axios');
 
 export default class StockScreen extends Component {
 
+   state = {
+        onceFetched:false,
+        products: [],
+        total:0,
 
-constructor(props) {
-    super(props);
-    this.state = {
-      tableData: [
-        {id:'p00001',name:'Item1', price:100, quantity:5},
-        {id:'p00002',name:'Item2', price:200, quantity:7},
-        {id:'p00003',name:'Item3', price:150, quantity:10},
-        {id:'p00004',name:'Item4', price:250, quantity:20},
-        {id:'p00005',name:'Item5', price:400, quantity:10},
-        {id:'p00006',name:'Item6', price:100, quantity:5},
-      ],
-      total:0
-    }
-  }
+   };
+
+   componentDidMount(){
+    this.getStockDetails();
+    this.interval = setInterval(this.getStockDetails, 20000);
+
+   }
+
+   getStockDetails=()=>{
+       this.setState({onceFetched:true});
+       axios.post("https://se-smartpos-backend.herokuapp.com/stock/viewsalespersonstock",
+       {salesperson_id:'W9FfmzqWI6QZjGWpRnZOpBhwGM02'})
+      .then( (response)=> {
+          if (response.data.success){
+             this.setState({products: response.data.data});
+          }
+      })
+      .catch(function (error) {
+          console.log(error);
+      });
+   };
+
+   componentWillUnmount() {
+//       clearInterval(this.intervalID);
+   }
+
 
   render() {
+    if (! this.state.onceFetched){
+          return(
+              <View style={{flex: 1,alignItems: 'center',justifyContent: 'center',}} >
+                    <Text style={{fontWeight:'bold',fontSize:32}}> Loading... </Text>
+              </View>);
+    }
+
+    if (this.state.products.length==0 ){
+        return(
+            <View style={{padding:20,flex: 1, alignItems: 'center',justifyContent: 'center'}}>
+                <Text style={{fontWeight: "bold",marginVertical: 4,fontSize:20,textAlign :'center',marginVertical:20}}>Stock In Hand</Text>
+                <Text style={{marginVertical: 4,fontSize:16,textAlign :'center',marginVertical:10}}>No products available in the stock</Text>
+            </View>)
+    }
+
     return (
       <View style={{padding:20}}>
       <Text style={{fontWeight: "bold",marginVertical: 4,fontSize:20,textAlign :'center',marginVertical:20}}>Stock In Hand</Text>
       <DataTable>
         <DataTable.Header>
-          <DataTable.Title>ID</DataTable.Title>
-          <DataTable.Title >Name</DataTable.Title>
-          <DataTable.Title >Unit Price</DataTable.Title>
-          <DataTable.Title numeric>Quantity</DataTable.Title>
+              <DataTable.Title>ID</DataTable.Title>
+              <DataTable.Title >Name</DataTable.Title>
+              <DataTable.Title >Unit Price</DataTable.Title>
+              <DataTable.Title numeric>Quantity</DataTable.Title>
         </DataTable.Header>
-{
-          this.state.tableData.map((item,index) => {
-          return (
-            <DataTable.Row
-              key={item.id}
 
-            >
+        <ScrollView>
+{
+          this.state.products.map((item,index) => {
+          return (
+            <DataTable.Row key={item.product_id}>
               <DataTable.Cell>
-                {item.id}
+                {item.product_id}
               </DataTable.Cell>
               <DataTable.Cell >
                 {item.name}
               </DataTable.Cell>
               <DataTable.Cell >
-                  {'Rs. '+item.price}
+                  {'Rs. '+item.unit_price}
                 </DataTable.Cell>
               <DataTable.Cell numeric>
                 {item.quantity}
@@ -54,12 +85,7 @@ constructor(props) {
             </DataTable.Row>
         )})}
 
-        <DataTable.Pagination
-          page={1}
-          numberOfPages={3}
-          onPageChange={(page) => { console.log(page); }}
-          label="1-2 of 6"
-        />
+        </ScrollView>
       </DataTable>
       </View>
     );

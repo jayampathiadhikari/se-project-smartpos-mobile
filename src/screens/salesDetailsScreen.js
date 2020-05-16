@@ -2,39 +2,109 @@ import React, { Component } from 'react';
 import { StyleSheet, View, ScrollView,Text,  Alert,TouchableOpacity,Modal,TouchableHighlight} from 'react-native';
 import {Button,Input} from 'react-native-elements';
 import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
+const axios = require('axios');
 
 export default class SalesDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
       tableHead: ['Invoice No.', 'Date', 'Total', 'Due Amount'],
-      tableData: [
-        {id:'00001',date:'1/4/2020', total:20000, due:0},
-        {id:'00002',date:'2/4/2020', total:10000, due:0},
-        {id:'00005',date:'7/4/2020', total:5000, due:0},
-        {id:'00008',date:'9/4/2020', total:15000, due:10000},
-        {id:'00010',date:'10/4/2020', total:20000, due:0},
-        {id:'00020',date:'12/4/2020', total:15000, due:1000},
-        {id:'00022',date:'15/4/2020', total:10000, due:8000},
-        {id:'00029',date:'20/4/2020', total:5000, due:2500},
-      ],
+      tableData: [],
+
       updateDueAmountModalVisible :false,
       invoiceToUpdate:'',
-      amountReceived : 0
+      amountReceived : 0,
+      onceFetched:false
     }
   }
 
-  openDueAmountModal(invoice){
+   componentDidMount(){
+      this.getInvoiceDetails();
+
+   }
+
+   getInvoiceDetails=()=>{
+         this.setState({onceFetched:true});
+         axios.post("https://se-smartpos-backend.herokuapp.com/invoice/viewallinvoices",
+         {shop_id:14})
+        .then( (response)=> {
+            if (response.data.success){
+               let invoices=[]
+               response.data.data.map((invoice)=>{
+                    invoices.push({
+                        id : invoice.invoice_id ,
+                        date : invoice.issued_date,
+                        total : invoice.invoice_value,
+                        due : (invoice.invoice_value-invoice.paid_amount)
+                    });
+               });
+               var sorted = invoices.sort(function IHaveAName(a, b) {
+                   return b.id < a.id ?  1
+                        : b.id > a.id ? -1
+                        : 0;
+               });
+               this.setState({tableData: sorted});
+            }
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    };
+
+
+    updateDatabasePaidAmount=(invoice_id,amountReceived)=>{
+        axios.put("https://se-smartpos-backend.herokuapp.com/invoice/updateinvoicepaidamount",
+        {"amount_received": amountReceived,
+         "invoice_id" : invoice_id
+        })
+        .then( (response)=> {
+            if (response.data.success){
+                this.setState(state => {
+                    const list = state.tableData.map((invoice, j)  => {
+                        if (invoice.id === this.state.invoiceToUpdate.id && this.state.amountReceived<=invoice.due) {
+                            const due_amount = invoice.due;
+                            invoice['due']=due_amount-this.state.amountReceived;
+                            return invoice;
+                        } else {
+                            return invoice;
+                        }
+                    });
+                    return {list};
+               },()=>{this.setState({amountReceived:0}); this.closeDeuAmountModal(); Alert.alert('Successfully Updated')});
+            }else{
+                this.setState({amountReceived:0});
+                this.closeDeuAmountModal();
+                Alert.alert('Error occured while updating. Try Again!');}
+            })
+        .catch(function (error) {
+            console.log(error);
+            this.setState({amountReceived:0});
+            this.closeDeuAmountModal();
+            Alert.alert('Error occured while updating. Try Again!');
+        });
+    };
+
+
+  openDueAmountModal=(invoice)=>{
     this.setState({invoiceToUpdate:invoice,updateDueAmountModalVisible:true});
   };
 
-  closeDeuAmountModal(){
+  closeDeuAmountModal=()=>{
     this.setState({updateDueAmountModalVisible:false,invoiceToUpdate:''});
   };
 
-  updateDueAmount(){
+  updateDueAmount= async ()=>{
+    const isSuccess = await this.updateDatabasePaidAmount(this.state.invoiceToUpdate.id,this.state.amountReceived);
+    console.log(isSuccess)
+    console.log('hghfhd')
+    if (!isSuccess){
+        this.setState({amountReceived:0});
+        this.closeDeuAmountModal();
+        Alert.alert('Error occured while updating. Try Again!')
+        return;
+    };
     this.setState(state => {
-          const list = state.tableData.map((invoice, j) => {
+          const list = state.tableData.map((invoice, j)  => {
             if (invoice.id === this.state.invoiceToUpdate.id && this.state.amountReceived<=invoice.due) {
               const due_amount = invoice.due;
               invoice['due']=due_amount-this.state.amountReceived;
@@ -49,7 +119,7 @@ export default class SalesDetails extends Component {
         },()=>{this.setState({amountReceived:0}); this.closeDeuAmountModal(); Alert.alert('Successfully Updated')});
   }
 
-  setDueAmount(amount,total_amount){
+  setDueAmount=(amount,total_amount)=>{
     if (~isNaN(amount) && amount<=total_amount){
         this.setState({amountReceived:amount});
     }else{
@@ -59,6 +129,21 @@ export default class SalesDetails extends Component {
 
   render() {
     const state = this.state;
+
+    if (! state.onceFetched){
+        return(
+            <View style={{flex: 1,alignItems: 'center',justifyContent: 'center',}} >
+                  <Text style={{fontWeight:'bold',fontSize:32}}> Loading... </Text>
+            </View>);
+    };
+
+    if (state.tableData.length==0 ){
+        return(
+            <View style={{flex: 1,alignItems: 'center',justifyContent: 'center',}} >
+                  <Text style={{fontWeight:'bold',fontSize:20}}> No sales are recorded. </Text>
+            </View>);
+    };
+
     const element = (invoice_index,invoice) => {
         if (invoice.due == 0 ){
             return(
@@ -104,7 +189,7 @@ export default class SalesDetails extends Component {
                                    onChangeText ={(amount)=>{this.setDueAmount(amount,state.invoiceToUpdate.due)}}
                                  />
 
-                                 <Button title='Update' buttonStyle={{...modalstyles.openButton , backgroundColor:"#af0810"}}  onPress={()=>{this.updateDueAmount()}}/>
+                                 <Button title='Update' buttonStyle={{...modalstyles.openButton , backgroundColor:"#af0810"}}  onPress={()=>{this.updateDatabasePaidAmount(this.state.invoiceToUpdate.id,this.state.amountReceived)}}/>
                                  <Button title = 'Cancel'  buttonStyle={modalstyles.openButton} onPress={() => {this.closeDeuAmountModal();}}/>
 
 

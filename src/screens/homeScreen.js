@@ -5,20 +5,36 @@ import {connect} from 'react-redux';
 import Geolocation from 'react-native-geolocation-service';
 import firestore from '@react-native-firebase/firestore';
 import {setUser} from "../store/reducers/authentication/action";
+const axios = require('axios');
 
 class HomeScreen extends Component {
 
   state = {
     entryCreated : 1,
-    dailyTarget : 8000,
+    dailyTarget : 'None',
     modalVisible:false,
   };
 
   componentDidMount() {
     console.log(this.props.user.email,'USER');
+    this.getDailyTarget();
     this.getInitialPosition();
     this.watchMovement();
+
     // this.watchFirestore();
+  };
+
+  getDailyTarget(){
+       axios.get("https://se-smartpos-backend.herokuapp.com/salesperson/getdailytarget")
+       .then( (response)=> {
+           var target=response.data.data.target_value;
+           if (Number.isInteger(target)){
+               this.setState({dailyTarget: 'Rs. '+target});
+           }
+       })
+       .catch(function (error) {
+           console.log(error);
+       });
   };
 
   componentWillUnmount(): void {
@@ -145,8 +161,8 @@ class HomeScreen extends Component {
           <Modal animationType="fade" transparent={true} visible={this.state.modalVisible}>
               <View style={modalstyles.centeredView}>
                 <View style={modalstyles.modalView}>
-                  <Text style={modalstyles.modalText}> Target assigned on {new Date().getDate() + '/' + new Date().getMonth() + '/' + new Date().getFullYear()} : </Text>
-                  <Text style = {{...modalstyles.modalText , fontWeight: 'bold'}}>Rs. {this.state.dailyTarget}</Text>
+                  <Text style={modalstyles.modalText}> Target assigned on {new Date().getDate() + '/' + (new Date().getMonth()+1) + '/' + new Date().getFullYear()} : </Text>
+                  <Text style = {{...modalstyles.modalText , fontWeight: 'bold'}}> {this.state.dailyTarget}</Text>
                   <Button title = 'Back'  buttonStyle={modalstyles.closeButton} onPress={() => {this.closeModal();}}/>
                 </View>
               </View>
