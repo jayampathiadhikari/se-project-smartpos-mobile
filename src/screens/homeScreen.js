@@ -5,22 +5,49 @@ import {connect} from 'react-redux';
 import Geolocation from 'react-native-geolocation-service';
 import firestore from '@react-native-firebase/firestore';
 import {setUser} from "../store/reducers/authentication/action";
-import {jsonObject} from "../constants/simulation";
+const axios = require('axios');
 
 class HomeScreen extends Component {
 
   state = {
     entryCreated : 1,
-    dailyTarget : 8000,
+    dailyTarget : 'None',
     modalVisible:false,
   };
 
   componentDidMount() {
     console.log(this.props.user.email,'USER');
-    // this.getInitialPosition();
-    // this.watchMovement();
-    this.simulation()
+    this.getDailyTarget();
+    this.getInitialPosition();
+    this.watchMovement();
+
     // this.watchFirestore();
+  };
+
+  getDailyTarget(){
+       axios.get("https://se-smartpos-backend.herokuapp.com/salesperson/getdailytarget")
+       .then( (response)=> {
+           var target=response.data.data.target_value;
+           if (Number.isInteger(target)){
+               this.setState({dailyTarget: 'Rs. '+target});
+           }
+       })
+       .catch(function (error) {
+           console.log(error);
+       });
+  };
+
+  componentWillUnmount(): void {
+    //Geolocation.clearWatch(this.watchID);
+    //add unscubcribe to prevent data fetch from firebsae
+    // this.unsubscribe();
+  };
+
+  async getLocationDetails(date){
+    firestore().collection(`users/userid/03-08-2020`).get().then(querySnap => {
+      const documentData = querySnap.docs.map(doc => doc.data());
+      console.log('DOCUMENT DATA', documentData)
+    })
   };
 
   async updateLocationDetails(ts,geoPoint){
@@ -31,18 +58,6 @@ class HomeScreen extends Component {
     const docRef = firestore().collection('userTravel').doc(userid);
     docRef.collection(dateString).add({time:ts,location:geoPoint});
     // console.log(docRef);
-  };
-
-  simulation = () => {
-    jsonObject.coordinates.forEach((coord,index)=>{
-      const geoPoint = new firestore.GeoPoint(coord[1], coord[0]);
-      setTimeout(async()=>{
-        const ts = new Date();
-        await this.updateLocationDetails(ts,geoPoint)
-        console.log('DATA UPLOADED')
-      },10000*index)
-    })
-
   };
 
   getInitialPosition() {
@@ -138,8 +153,8 @@ class HomeScreen extends Component {
           <Modal animationType="fade" transparent={true} visible={this.state.modalVisible}>
               <View style={modalstyles.centeredView}>
                 <View style={modalstyles.modalView}>
-                  <Text style={modalstyles.modalText}> Target assigned on {new Date().getDate() + '/' + new Date().getMonth() + '/' + new Date().getFullYear()} : </Text>
-                  <Text style = {{...modalstyles.modalText , fontWeight: 'bold'}}>Rs. {this.state.dailyTarget}</Text>
+                  <Text style={modalstyles.modalText}> Target assigned on {new Date().getDate() + '/' + (new Date().getMonth()+1) + '/' + new Date().getFullYear()} : </Text>
+                  <Text style = {{...modalstyles.modalText , fontWeight: 'bold'}}> {this.state.dailyTarget}</Text>
                   <Button title = 'Back'  buttonStyle={modalstyles.closeButton} onPress={() => {this.closeModal();}}/>
                 </View>
               </View>
