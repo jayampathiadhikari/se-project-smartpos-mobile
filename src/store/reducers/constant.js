@@ -6,7 +6,8 @@ export const ACTION_TYPES = {
   SET_USER_IMAGE : 'SET_USER_IMAGE',
   SET_SIGNIN_STATUS : 'SET_SIGNIN_STATUS',
   SET_PHONE_NO : 'SET_PHONE_NO',
-  SET_USER : 'SET_USER'
+  SET_USER : 'SET_USER',
+  SET_SHOPS : 'SET_SHOPS'
 };
 
 export interface IAction {

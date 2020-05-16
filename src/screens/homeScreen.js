@@ -19,7 +19,7 @@ class HomeScreen extends Component {
     console.log(this.props.user.email,'USER');
     this.getDailyTarget();
     this.getInitialPosition();
-    this.watchMovement();
+    // this.watchMovement();
 
     // this.watchFirestore();
   };
@@ -91,8 +91,8 @@ class HomeScreen extends Component {
         console.log(err)
       }),
       {
-        enableHighAccuracy: false,
-        distanceFilter: 0,
+        enableHighAccuracy: true,
+        distanceFilter: 100,
         interval: 10000,
         fastestInterval: 5000,
       } );
