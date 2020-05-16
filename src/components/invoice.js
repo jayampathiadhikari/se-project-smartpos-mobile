@@ -7,10 +7,6 @@ import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
 
 export default class Invoice extends Component {
 
-  calAmountPerItem(index){
-      let item = this.props.data[index]
-      return item.price * item.quantity;
-  }
 
   calTotal () {
       var t=0;
@@ -33,7 +29,7 @@ export default class Invoice extends Component {
                     <Cell key={0} data={rowData.name} textStyle={styles.text}/>
                     <Cell key={1} data={'Rs. '+rowData.price} textStyle={styles.text}/>
                     <Cell key={2} data={rowData.quantity } textStyle={styles.text}/>
-                    <Cell key={3} data={this.calAmountPerItem(index)} textStyle={styles.text}/>
+                    <Cell key={3} data={rowData.quantity*rowData.price} textStyle={styles.text}/>
                   </TableWrapper>
                 ))
               }
