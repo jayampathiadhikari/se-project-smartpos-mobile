@@ -1,6 +1,7 @@
 import axios from 'axios';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import {MAPBOX_TOKEN} from "./constants/constants";
 
 export const getRoutesForSalesperson = async (salesperson_id) => {
   const res = await axios.post('https://se-smartpos-backend.herokuapp.com/route/get-all-routes', {
@@ -114,6 +115,7 @@ export const getOptimizedRouteByWaypoints = async (waypointsArray) => {
 };
 
 export const getRouteByWaypoints = async (waypointsArray) => {
+  console.log(waypointsArray,'WAYPOINT ARRAY');
   var coords = '';
   waypointsArray.forEach((coord) => {
     coords += coord.join() + ';'
@@ -134,5 +136,6 @@ export const getRouteByWaypoints = async (waypointsArray) => {
 };
 
 export const getWaypointsArray = (shops) => {
-
+  console.log (shops.map(shop => [shop.longitude,shop.latitude]),'waypoint')
+  return (shops.map(shop => [shop.longitude,shop.latitude]))
 };
