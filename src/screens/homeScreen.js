@@ -19,7 +19,7 @@ class HomeScreen extends Component {
     console.log(this.props.user.email,'USER');
     this.getDailyTarget();
     this.getInitialPosition();
-    this.watchMovement();
+    // this.watchMovement();
 
     // this.watchFirestore();
   };
@@ -80,14 +80,6 @@ class HomeScreen extends Component {
     });
   };
 
-  watchFirestore() {
-    this.unsubscribe = firestore().collection('users/0001/18-03-2020')
-      .onSnapshot({
-        error: (e) => console.error(e),
-        next: (querySnapshot) => {console.log(querySnapshot.size)},
-      });
-  };
-
   watchMovement() {
     //we use 10s gap for location updates
     this.watchID = Geolocation.watchPosition((lastPosition) => {
@@ -99,9 +91,9 @@ class HomeScreen extends Component {
         console.log(err)
       }),
       {
-        enableHighAccuracy: false,
-        distanceFilter: 0,
-        interval: 30000,
+        enableHighAccuracy: true,
+        distanceFilter: 100,
+        interval: 10000,
         fastestInterval: 5000,
       } );
   };

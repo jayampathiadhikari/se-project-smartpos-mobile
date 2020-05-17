@@ -4,6 +4,7 @@ import { Input,Icon, Button, Image  } from 'react-native-elements';
 import auth from '@react-native-firebase/auth';
 import {connect} from "react-redux";
 import {setUser} from "../store/reducers/authentication/action";
+import {checkAuthentication} from "../Utils";
 
 class Login extends React.Component{
   state = {
@@ -21,12 +22,20 @@ class Login extends React.Component{
     console.log('AUTHENTICATION');
     try{
       // const user = await auth().signInWithEmailAndPassword(this.state.email,this.state.password)
-      const user = await auth().signInWithEmailAndPassword('salesp@mailcupp.com','Password123#')
-      console.log(user.user)
-      if (user != null){
-        this.props.setUser(user.user);
+      // const user = await auth().signInWithEmailAndPassword('salesp@mailcupp.com','Password123#')
+      const res = await checkAuthentication('salesp@mailcupp.com','Password123#');
+      console.log(res);
+      if(res.success){
+        this.props.setUser(res.user);
         this.props.navigation.navigate('Home')
-      }
+      }else{
+      console.log('auth error');
+    }
+      // console.log(user.user)
+      // if (user != null){
+      //   this.props.setUser(user.user);
+      //   this.props.navigation.navigate('Home')
+      // }
     }catch(e){
       console.log(e)
     }

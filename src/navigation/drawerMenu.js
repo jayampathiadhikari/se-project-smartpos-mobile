@@ -1,6 +1,8 @@
 import React from 'react';
-import {View, Text, ScrollView, Image} from 'react-native';
-import {Button, Icon, ListItem} from 'react-native-elements';
+import {ScrollView} from 'react-native';
+import {ListItem} from 'react-native-elements';
+import {connect} from "react-redux";
+import {setShopDetails} from "../store/reducers/ui/action";
 
 
 const list = [
@@ -25,15 +27,19 @@ const list = [
   }
 ];
 
-export default class DrawerMenu extends React.Component{
+class DrawerMenu extends React.Component{
+  componentDidMount(): void {
+    console.log(this.props.shops,'SHOPS REDUX')
+  }
+
   render(){
     return(
       <ScrollView contentContainerStyle={{flexGrow: 1}}>
-        {list.map((item, i) =>
+        {this.props.shops.map((item, i) =>
           (
             <ListItem
               key={i}
-              title={item.shop_name}
+              title={item.name}
               //                      chevronColor={'red'}
               chevron
               containerStyle={{
@@ -43,7 +49,7 @@ export default class DrawerMenu extends React.Component{
                 borderTopRightRadius: 3,
               }}
               onPress={() => {
-                this.props.navigation.navigate('ShopHome', {shop_id: item.shop_id, shop_name: item.shop_name});
+                this.props.navigation.navigate('ShopHome', {shop_id: item.shop_id, shop_name: item.name});
               }}
               titleStyle={{color: 'white'}}
             />
@@ -53,3 +59,17 @@ export default class DrawerMenu extends React.Component{
     )
   }
 }
+
+const mapStateToProps = (state) => ({
+  shops : state.uiReducer.shops,
+});
+
+
+const bindAction = (dispatch) => ({
+
+});
+
+export default connect(
+  mapStateToProps,
+  bindAction
+)(DrawerMenu);
