@@ -107,6 +107,7 @@ export const getOptimizedRouteByWaypoints = async (waypointsArray) => {
         alternatives: false,
         geometries: "geojson",
         steps: false,
+        overview:"full",
         access_token: MAPBOX_TOKEN
       }
     }
@@ -128,6 +129,7 @@ export const getRouteByWaypoints = async (waypointsArray) => {
         alternatives: false,
         geometries: "geojson",
         steps: false,
+        overview:"full",
         access_token: MAPBOX_TOKEN
       }
     }

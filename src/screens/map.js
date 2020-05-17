@@ -72,19 +72,15 @@ class ShowMap extends React.Component {
     wayPoints:null,
     directions:null
   };
-  wayPoints = [];
 
   componentDidMount() {
     MapboxGL.setTelemetryEnabled(false);
-
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.shops != this.props.shops) {
       console.log(this.props.shops, 'MAP SHOPS PROPS UPDATED');
       const geoJSON = createGeojson(this.props.shops);
-
-
       console.log(geoJSON);
       const wayPoints = getWaypointsArray(this.props.shops);
       this.setState({
@@ -95,9 +91,6 @@ class ShowMap extends React.Component {
     }
   }
 
-  // onLocationUpdate = (location) => {
-  //   console.log('LOCATION MAPBOX')
-  // };
   renderShops = () => {
     console.log('RENDERSHOPS', this.state.shopGeoJSON);
     return(
@@ -171,7 +164,7 @@ class ShowMap extends React.Component {
           </MapboxGL.MapView>
           <Bubble onPress={this.getRoute} style={{bottom: 30}}>
             <Text>
-              Toggle User Location:{' '}
+              Show Route
             </Text>
           </Bubble>
         </View>
