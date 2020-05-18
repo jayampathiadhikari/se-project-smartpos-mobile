@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
-import {View,Text,ScrollView} from 'react-native';
-import { DataTable } from 'react-native-paper';
+import {View, Text, ScrollView} from 'react-native';
+import {Button,Card} from 'react-native-elements';
 const axios = require('axios');
 
 export default class StockScreen extends Component {
@@ -14,7 +14,7 @@ export default class StockScreen extends Component {
 
    componentDidMount(){
     this.getStockDetails();
-    this.interval = setInterval(this.getStockDetails, 20000);
+    // this.interval = setInterval(this.getStockDetails, 20000);
 
    }
 
@@ -45,49 +45,34 @@ export default class StockScreen extends Component {
               </View>);
     }
 
-    if (this.state.products.length==0 ){
+    if (this.state.products.length===0 ){
         return(
             <View style={{padding:20,flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-                <Text style={{fontWeight: "bold",marginVertical: 4,fontSize:20,textAlign :'center',marginVertical:20}}>Stock In Hand</Text>
-                <Text style={{marginVertical: 4,fontSize:16,textAlign :'center',marginVertical:10}}>No products available in the stock</Text>
+                <Text style={{fontWeight: "bold",fontSize:20,textAlign :'center',marginVertical:20}}>Stock In Hand</Text>
+                <Text style={{fontSize:16,textAlign :'center',marginVertical:10}}>No products available in the stock</Text>
+                <Button title='Refresh' buttonStyle={{padding: 5,marginTop: 10,borderRadius:5 ,marginBottom:40}} onPress={()=>{this.getStockDetails()}}/>
             </View>)
     }
 
     return (
-      <View style={{padding:20}}>
-      <Text style={{fontWeight: "bold",marginVertical: 4,fontSize:20,textAlign :'center',marginVertical:20}}>Stock In Hand</Text>
-      <DataTable>
-        <DataTable.Header>
-              <DataTable.Title>ID</DataTable.Title>
-              <DataTable.Title >Name</DataTable.Title>
-              <DataTable.Title >Unit Price</DataTable.Title>
-              <DataTable.Title numeric>Quantity</DataTable.Title>
-        </DataTable.Header>
-
-        <ScrollView>
-{
-          this.state.products.map((item,index) => {
-          return (
-            <DataTable.Row key={item.product_id}>
-              <DataTable.Cell>
-                {item.product_id}
-              </DataTable.Cell>
-              <DataTable.Cell >
-                {item.name}
-              </DataTable.Cell>
-              <DataTable.Cell >
-                  {'Rs. '+item.unit_price}
-                </DataTable.Cell>
-              <DataTable.Cell numeric>
-                {item.quantity}
-              </DataTable.Cell>
-
-            </DataTable.Row>
-        )})}
-
-        </ScrollView>
-      </DataTable>
-      </View>
+      <ScrollView style={{padding:20}}>
+      <Text style={{fontWeight: "bold",fontSize:20,textAlign :'center',marginVertical:20,color:'#1F5EC6'}}>STOCK IN HAND</Text>
+          <Card title="Details of the products">
+              {
+                  this.state.products.map((product,i) => {
+                      return (
+                          <View key={i} >
+                              <Text style={{fontWeight: "bold",fontSize:15,marginTop:15}}>{product.name}</Text>
+                              <Text>    ID               : {product.product_id}</Text>
+                              <Text>    Unit Price : Rs.{product.unit_price}</Text>
+                              <Text>    Quantity   : {product.quantity}</Text>
+                          </View>
+                      );
+                  })
+              }
+          </Card>
+          <Button title='Refresh' buttonStyle={{marginTop:20,marginBottom:20,borderRadius:6,backgroundColor:'#4D4E50'}} onPress={()=>{this.getStockDetails()}}/>
+      </ScrollView>
     );
   }
 }
