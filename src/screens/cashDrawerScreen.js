@@ -1,5 +1,5 @@
-import React,{Component} from 'react';
-import {View,Text,TouchableOpacity} from 'react-native';
+import React from 'react';
+import {View,Text} from 'react-native';
 import {Button} from 'react-native-elements';
 const axios = require('axios');
 
@@ -11,12 +11,13 @@ export default class cashDrawersScreen extends React.Component {
 
 
     componentDidMount(){
+        this.getInvoiceDetails();
         this.interval = setInterval(this.getInvoiceDetails, 20000);
     };
 
      getInvoiceDetails=()=>{
              axios.post("https://se-smartpos-backend.herokuapp.com/invoice/viewallinvoices",
-             {shop_id:14})
+             {shop_id:8})
             .then( (response)=> {
                 if (response.data.success){
                    let amount=0
@@ -39,7 +40,7 @@ export default class cashDrawersScreen extends React.Component {
   render() {
     const state=this.state;
     const element = ()=>{
-         if (this.state.dueAmount == 0 ){
+         if (this.state.dueAmount === 0 ){
             return <Button title={'Rs. '+state.dueAmount} buttonStyle={{alignItems: 'center',backgroundColor: '#0a5a00' ,padding: 15,width:200, marginTop: 15}} titleStyle={{color:'#fff',fontWeight:'100' ,fontSize: 20}}/>
          }else{
             return <Button title={'Rs. '+state.dueAmount} buttonStyle={{alignItems: 'center',backgroundColor: '#af0810' ,padding: 15,width:200, marginTop: 15}} titleStyle={{color:'#fff',fontWeight:'100' ,fontSize: 20}}/>
