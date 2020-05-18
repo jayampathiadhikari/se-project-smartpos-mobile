@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, ScrollView,Text,  Alert,TouchableOpacity,Modal,TouchableHighlight} from 'react-native';
+import { StyleSheet, View, ScrollView,Text,  Alert,TouchableOpacity,Modal} from 'react-native';
 import {Button,Input} from 'react-native-elements';
 import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
 const axios = require('axios');
@@ -15,6 +15,7 @@ export default class SalesDetails extends Component {
       invoiceToUpdate:'',
       amountReceived : 0,
       onceFetched:false
+
     }
   }
 
@@ -26,29 +27,30 @@ export default class SalesDetails extends Component {
    getInvoiceDetails=()=>{
          this.setState({onceFetched:true});
          axios.post("https://se-smartpos-backend.herokuapp.com/invoice/viewallinvoices",
-         {shop_id:14})
-        .then( (response)=> {
-            if (response.data.success){
-               let invoices=[]
-               response.data.data.map((invoice)=>{
-                    invoices.push({
-                        id : invoice.invoice_id ,
-                        date : invoice.issued_date,
-                        total : invoice.invoice_value,
-                        due : (invoice.invoice_value-invoice.paid_amount)
-                    });
-               });
-               var sorted = invoices.sort(function IHaveAName(a, b) {
-                   return b.id < a.id ?  1
-                        : b.id > a.id ? -1
-                        : 0;
-               });
-               this.setState({tableData: sorted});
-            }
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+           {shop_id: this.props.navigation.getParam('shop_id')})
+           .then((response) => {
+               if (response.data.success) {
+                   let invoices = []
+                   response.data.data.map((invoice) => {
+                       invoices.push({
+                           id: invoice.invoice_id,
+                           date: invoice.issued_date,
+                           total: invoice.invoice_value,
+                           due: (invoice.invoice_value - invoice.paid_amount)
+                       });
+                   });
+                   const sorted = invoices.sort(function IHaveAName(a, b) {
+                       return b.id < a.id ? 1
+                           : b.id > a.id ? -1
+                               : 0;
+                   });
+                   this.setState({tableData: sorted});
+               }
+           })
+           .catch(function (error) {
+               console.log(error);
+           });
+
     };
 
 
@@ -60,7 +62,7 @@ export default class SalesDetails extends Component {
         .then( (response)=> {
             if (response.data.success){
                 this.setState(state => {
-                    const list = state.tableData.map((invoice, j)  => {
+                    const list = state.tableData.map((invoice)  => {
                         if (invoice.id === this.state.invoiceToUpdate.id && this.state.amountReceived<=invoice.due) {
                             const due_amount = invoice.due;
                             invoice['due']=due_amount-this.state.amountReceived;
@@ -85,6 +87,8 @@ export default class SalesDetails extends Component {
     };
 
 
+
+
   openDueAmountModal=(invoice)=>{
     this.setState({invoiceToUpdate:invoice,updateDueAmountModalVisible:true});
   };
@@ -92,32 +96,6 @@ export default class SalesDetails extends Component {
   closeDeuAmountModal=()=>{
     this.setState({updateDueAmountModalVisible:false,invoiceToUpdate:''});
   };
-
-  updateDueAmount= async ()=>{
-    const isSuccess = await this.updateDatabasePaidAmount(this.state.invoiceToUpdate.id,this.state.amountReceived);
-    console.log(isSuccess)
-    console.log('hghfhd')
-    if (!isSuccess){
-        this.setState({amountReceived:0});
-        this.closeDeuAmountModal();
-        Alert.alert('Error occured while updating. Try Again!')
-        return;
-    };
-    this.setState(state => {
-          const list = state.tableData.map((invoice, j)  => {
-            if (invoice.id === this.state.invoiceToUpdate.id && this.state.amountReceived<=invoice.due) {
-              const due_amount = invoice.due;
-              invoice['due']=due_amount-this.state.amountReceived;
-              return invoice;
-            } else {
-              return invoice;
-            }
-          });
-          return {
-            list,
-          };
-        },()=>{this.setState({amountReceived:0}); this.closeDeuAmountModal(); Alert.alert('Successfully Updated')});
-  }
 
   setDueAmount=(amount,total_amount)=>{
     if (~isNaN(amount) && amount<=total_amount){
@@ -133,21 +111,22 @@ export default class SalesDetails extends Component {
     if (! state.onceFetched){
         return(
             <View style={{flex: 1,alignItems: 'center',justifyContent: 'center',}} >
-                  <Text style={{fontWeight:'bold',fontSize:32}}> Loading... </Text>
+                  <Text style={{fontWeight:'bold',fontSize:20}}> Loading... </Text>
             </View>);
-    };
+    }
 
-    if (state.tableData.length==0 ){
+    if (state.tableData.length===0 ){
         return(
             <View style={{flex: 1,alignItems: 'center',justifyContent: 'center',}} >
                   <Text style={{fontWeight:'bold',fontSize:20}}> No sales are recorded. </Text>
+                <Button title='Refresh' onPress={()=>{this.getInvoiceDetails()}}/>
             </View>);
-    };
+    }
 
     const element = (invoice_index,invoice) => {
-        if (invoice.due == 0 ){
+        if (invoice.due === 0 ){
             return(
-                <Button title='Paid'buttonStyle={{alignItems: 'center',backgroundColor: '#0a5a00',padding: 2,marginTop: 1,}} titleStyle={{color:'#fff',fontWeight:'100'}}/>
+                <Button title='Paid' buttonStyle={{alignItems: 'center',backgroundColor: '#0a5a00',padding: 2,marginTop: 1}} titleStyle={{color:'#fff',fontWeight:'100'}}/>
             );
         }else{
             return (
@@ -176,7 +155,7 @@ export default class SalesDetails extends Component {
             ))
           }
         </Table>
-
+          <Button title='Refresh' buttonStyle={{padding: 5,marginTop: 10,borderRadius:5 ,marginBottom:40}} onPress={()=>{this.getInvoiceDetails()}}/>
         <Modal animationType="fade" transparent={true} visible={state.updateDueAmountModalVisible}>
                              <View style={modalstyles.centeredView}>
                                <View style={modalstyles.modalView}>
