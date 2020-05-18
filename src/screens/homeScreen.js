@@ -37,7 +37,7 @@ class HomeScreen extends Component {
        });
   };
 
-  componentWillUnmount(): void {
+  componentWillUnmount() {
     //Geolocation.clearWatch(this.watchID);
     //add unscubcribe to prevent data fetch from firebsae
     // this.unsubscribe();
