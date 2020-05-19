@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {View,Text,StyleSheet,Button} from 'react-native';
+import {View,Text,StyleSheet} from 'react-native';
 
 
 import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
@@ -9,7 +9,7 @@ export default class Invoice extends Component {
 
 
   calTotal () {
-      var t=0;
+      let t=0;
       this.props.data.map((item) => {
         t+=item.price*item.quantity;
       });
@@ -19,12 +19,14 @@ export default class Invoice extends Component {
   render() {
     return (
         <View >
-            <Text>Invoice ID : 10001 </Text>
-            <Text>Date : {new Date().getDate() + '/' + new Date().getMonth() + '/' + new Date().getFullYear()} </Text>
+            <Text style={{fontSize:25,fontWeight:'bold',textAlign:'right',marginBottom:15}}>INVOICE </Text>
+            <Text style={{fontSize:15,fontWeight:'bold',textAlign:'right'}}>Invoice ID : 60 </Text>
+            <Text style={{fontSize:15,fontWeight:'bold',textAlign:'right'}}>Shop ID : {this.props.shop_id} </Text>
+            <Text style={{fontSize:15,fontWeight:'bold',textAlign:'right',marginBottom:20}} >Date : {new Date().getDate() + '/' + new Date().getMonth() + '/' + new Date().getFullYear()} </Text>
           <Table borderStyle={{borderColor: 'transparent'}}>
             <Row data={['Name','Unit Price','Quantity','Amount']} style={styles.head} textStyle={styles.textHeader}/>
             {
-                this.props.data.filter((item)=>{return item.quantity != 0;}).map((rowData, index) => (
+                this.props.data.filter((item)=>{return item.quantity !== 0;}).map((rowData, index) => (
                   <TableWrapper key={index} style={styles.row}>
                     <Cell key={0} data={rowData.name} textStyle={styles.text}/>
                     <Cell key={1} data={'Rs. '+rowData.price} textStyle={styles.text}/>
@@ -34,7 +36,7 @@ export default class Invoice extends Component {
                 ))
               }
           </Table>
-          <Text >Total : Rs. {this.calTotal()}</Text>
+          <Text style={{fontSize:15,fontWeight:'bold',textAlign:'right' ,marginTop:10,marginBottom:30}}>Total   :    Rs.{this.calTotal()}</Text>
         </View>
     );
   }

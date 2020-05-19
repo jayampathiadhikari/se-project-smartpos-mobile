@@ -1,9 +1,11 @@
 import React,{Component} from 'react';
 import {View, Text, ScrollView} from 'react-native';
 import {Button,Card} from 'react-native-elements';
+import {connect} from 'react-redux';
 const axios = require('axios');
 
-export default class StockScreen extends Component {
+
+class StockScreen extends Component {
 
    state = {
         onceFetched:false,
@@ -21,7 +23,7 @@ export default class StockScreen extends Component {
    getStockDetails=()=>{
        this.setState({onceFetched:true});
        axios.post("https://se-smartpos-backend.herokuapp.com/stock/viewsalespersonstock",
-       {salesperson_id:'W9FfmzqWI6QZjGWpRnZOpBhwGM02'})
+       {salesperson_id:this.props.user.uid})
       .then( (response)=> {
           if (response.data.success){
              this.setState({products: response.data.data});
@@ -41,17 +43,18 @@ export default class StockScreen extends Component {
     if (! this.state.onceFetched){
           return(
               <View style={{flex: 1,alignItems: 'center',justifyContent: 'center',}} >
-                    <Text style={{fontWeight:'bold',fontSize:32}}> Loading... </Text>
+                    <Text style={{fontWeight:'bold',fontSize:20}}> Loading... </Text>
               </View>);
     }
 
-    if (this.state.products.length===0 ){
+    else if (this.state.products.length===0 ){
         return(
-            <View style={{padding:20,flex: 1, alignItems: 'center',justifyContent: 'center'}}>
+            <View style={{flex: 1,alignItems: 'center',justifyContent: 'center'}} >
                 <Text style={{fontWeight: "bold",fontSize:20,textAlign :'center',marginVertical:20}}>Stock In Hand</Text>
-                <Text style={{fontSize:16,textAlign :'center',marginVertical:10}}>No products available in the stock</Text>
-                <Button title='Refresh' buttonStyle={{padding: 5,marginTop: 10,borderRadius:5 ,marginBottom:40}} onPress={()=>{this.getStockDetails()}}/>
-            </View>)
+                <Text style={{fontSize:15}}>No products available in the stock</Text>
+                <Button title='Refresh' buttonStyle={{paddingLeft:30,paddingRight:30,marginTop:10}} onPress={()=>{this.getStockDetails()}}/>
+            </View>
+        )
     }
 
     return (
@@ -76,3 +79,14 @@ export default class StockScreen extends Component {
     );
   }
 }
+
+
+
+const mapStateToProps = (state) => ({
+    user: state.AuthenticationReducer.user,
+});
+
+
+export default connect(
+    mapStateToProps
+)(StockScreen);

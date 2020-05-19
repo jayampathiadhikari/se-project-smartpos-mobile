@@ -12,12 +12,12 @@ export default class cashDrawersScreen extends React.Component {
 
     componentDidMount(){
         this.getInvoiceDetails();
-        this.interval = setInterval(this.getInvoiceDetails, 20000);
+        this.interval = setInterval(this.getInvoiceDetails, 10000);
     };
 
-     getInvoiceDetails=()=>{
+    getInvoiceDetails=()=>{
              axios.post("https://se-smartpos-backend.herokuapp.com/invoice/viewallinvoices",
-             {shop_id:8})
+             {shop_id:this.props.navigation.getParam('shop_id')})
             .then( (response)=> {
                 if (response.data.success){
                    let amount=0
@@ -41,16 +41,16 @@ export default class cashDrawersScreen extends React.Component {
     const state=this.state;
     const element = ()=>{
          if (this.state.dueAmount === 0 ){
-            return <Button title={'Rs. '+state.dueAmount} buttonStyle={{alignItems: 'center',backgroundColor: '#0a5a00' ,padding: 15,width:200, marginTop: 15}} titleStyle={{color:'#fff',fontWeight:'100' ,fontSize: 20}}/>
+            return <Button title={'Rs. '+state.dueAmount} buttonStyle={{alignItems: 'center',backgroundColor: '#0a5a00' ,padding: 15,width:200, marginTop: 15}} titleStyle={{color:'#fff',fontWeight:'100' ,fontSize: 20}} onPress={()=>{}}/>
          }else{
-            return <Button title={'Rs. '+state.dueAmount} buttonStyle={{alignItems: 'center',backgroundColor: '#af0810' ,padding: 15,width:200, marginTop: 15}} titleStyle={{color:'#fff',fontWeight:'100' ,fontSize: 20}}/>
+            return <Button title={'Rs. '+state.dueAmount} buttonStyle={{alignItems: 'center',backgroundColor: '#af0810' ,padding: 15,width:200, marginTop: 15}} titleStyle={{color:'#fff',fontWeight:'100' ,fontSize: 20}} onPress={()=>{}} />
 
          }
     }
 
 
     return (
-        <View style={{flex: 1,alignItems: 'center',justifyContent: 'center',}} >
+        <View style={{flex: 1,alignItems: 'center',justifyContent: 'center'}} >
           <Text style={{fontWeight:'bold',fontSize:20}}>Total Due Amount  : </Text>
           {element()}
         </View>
