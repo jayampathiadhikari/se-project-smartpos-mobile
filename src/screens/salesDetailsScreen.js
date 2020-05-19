@@ -118,8 +118,8 @@ export default class SalesDetails extends Component {
     if (state.tableData.length===0 ){
         return(
             <View style={{flex: 1,alignItems: 'center',justifyContent: 'center',}} >
-                  <Text style={{fontWeight:'bold',fontSize:20}}> No sales are recorded. </Text>
-                <Button title='Refresh' onPress={()=>{this.getInvoiceDetails()}}/>
+                  <Text style={{fontWeight:'bold',fontSize:15}}> No sales are recorded. </Text>
+                <Button title='Refresh' buttonStyle={{paddingLeft:30,paddingRight:30,marginTop:10}} onPress={()=>{this.getInvoiceDetails()}}/>
             </View>);
     }
 
