@@ -1,12 +1,13 @@
 
 import React, { Component } from 'react';
-import { StyleSheet, ScrollView,View, Text, Alert ,Modal,TouchableHighlight} from 'react-native';
+import {StyleSheet, ScrollView, View, Text, Alert, Modal} from 'react-native';
 import {Button } from 'react-native-elements';
 import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
 import Invoice from '../components/invoice.js';
+import {connect} from "react-redux";
 const axios = require('axios');
 
-export default class SalesDetails extends Component {
+class GenerateInvoiceScreen extends Component {
 
     constructor(props) {
         super(props);
@@ -28,7 +29,7 @@ export default class SalesDetails extends Component {
     getStockDetails=()=>{
         this.setState({onceFetched:true});
         axios.post("https://se-smartpos-backend.herokuapp.com/stock/viewsalespersonstock",
-        {salesperson_id:'W9FfmzqWI6QZjGWpRnZOpBhwGM02'})
+        {salesperson_id:this.props.user.uid})
         .then( (response)=> {
             if (response.data.success){
             let products=[]
@@ -52,25 +53,25 @@ export default class SalesDetails extends Component {
     generateInvoice=()=>{
         let productsList=[];
         this.state.tableData.map((product)=>{
-            if (product.quantity!=0){
+            if (product.quantity!==0){
                 productsList.push({product_id:product.id,quantity:product.quantity});
             }
         });
-        console.log(productsList);
+
         axios.post("https://se-smartpos-backend.herokuapp.com/invoice/generateInvoice",
-        {salesperson_id:'W9FfmzqWI6QZjGWpRnZOpBhwGM02',shop_id : 14,products:JSON.stringify(productsList) })
+        {salesperson_id:this.props.user.uid,shop_id : this.props.navigation.getParam('shop_id'),products:JSON.stringify(productsList) })
         .then( (response)=> {
-        console.log(response);
             if (response.data.success){
                 Alert.alert('Invoice Successfully Generated');
                 this.getStockDetails();
                 this.setQuantityToZero();
-            };
-            Alert.alert('Error occured while generation invoice.Try Again!');
+            }else{
+                Alert.alert('Error occured while generating invoice.Try Again!');
+            }
         })
         .catch(function (error) {
             console.log(error);
-            Alert.alert('Error occured while generation invoice.Try Again!');
+            Alert.alert('Error occured while generating invoice.Try Again!');
 
         });
     };
@@ -99,7 +100,7 @@ export default class SalesDetails extends Component {
 
         this.setState(state => {
             const list = state.tableData.map((item, j) => {
-                if (j === i && item.quantity!=0) {
+                if (j === i && item.quantity!==0) {
                     const pre_quantity=item.quantity;
                     delete item.quantity;
                     item['quantity']=pre_quantity-1;
@@ -113,7 +114,7 @@ export default class SalesDetails extends Component {
     };
 
     calTotal= ()=> {
-        var t=0;
+        let t=0;
         this.state.tableData.map((item) => {
             t+=item.price*item.quantity;
         });
@@ -121,7 +122,7 @@ export default class SalesDetails extends Component {
     }
 
     openModal=()=>{
-        if(this.state.total==0){
+        if(this.state.total===0){
             Alert.alert('No items added to the invoice')
         }else{
             this.setState({modalVisible:true});
@@ -132,14 +133,9 @@ export default class SalesDetails extends Component {
         this.setState({modalVisible:false});
     }
 
-    calAmount=(index)=>{
-        let item = this.state.tableData[index]
-        return item.price * item.quantity;
-    }
-
     setQuantityToZero=()=>{
         this.setState(state => {
-            const list = state.tableData.map((item, j) => {
+            const list = state.tableData.map((item) => {
             item.quantity=0;
             return item
             });
@@ -152,11 +148,12 @@ export default class SalesDetails extends Component {
 
     const state = this.state;
 
-    if (state.tableData.length==0 ){
+    if (state.tableData.length===0 ){
        return(
-           <View style={{padding:20,flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-               <Text style={{marginVertical: 4,fontSize:16,textAlign :'center',marginVertical:10}}>No products available in the stock</Text>
-           </View>)
+           <View style={{flex: 1,alignItems: 'center',justifyContent: 'center',}} >
+               <Text style={{fontWeight:'bold',fontSize:15}}> No products available in the stock. </Text>
+               <Button title='Refresh' buttonStyle={{paddingLeft:30,paddingRight:30,marginTop:10}} onPress={()=>{this.getStockDetails()}}/>
+           </View>);
     }
 
 
@@ -189,21 +186,20 @@ export default class SalesDetails extends Component {
         <Button title="Generate Invoice" buttonStyle={{borderRadius:5 ,marginBottom:40 , backgroundColor:"#053d6e"}} onPress={()=>{this.openModal()}} />
 
         <Modal
-                animationType="slide"
-                transparent={false}
-                visible={state.modalVisible}
-              >
-                <View style={modalstyles.centeredView}>
-                  <View >
+            animationType="slide"
+            transparent={false}
+            visible={state.modalVisible}
+        >
+            <View style={{flex:1,justifyContent:'center',padding:20}}>
+              <View >
 
-                    <Invoice data={state.tableData }/>
-
-                    <Button title="Confirm" buttonStyle={{borderRadius:5 ,marginBottom:40 , backgroundColor:"#053d6e"}} onPress={()=>{this.generateInvoice()}}/>
-
-                    <Button title="Cancel" buttonStyle={{borderRadius:5 ,marginBottom:40 , backgroundColor:"#053d6e"}} onPress={() => {this.closeModal(); }}/>
-
-                  </View>
+                <Invoice data={state.tableData } shop_id={this.props.navigation.getParam('shop_id')}/>
+                  <View style={{flex:1, flexDirection:'row' ,justifyContent:'center',marginTop:30}}>
+                    <Button title="Confirm" buttonStyle={{borderRadius:5 ,backgroundColor:"#053d6e",paddingLeft:40,paddingRight:40 ,padding:20}} onPress={()=>{this.generateInvoice()}}/>
+                    <Button title="Cancel" buttonStyle={{borderRadius:5 , backgroundColor:"#053d6e",paddingLeft:40,paddingRight:40,padding:20,marginLeft:10}} onPress={() => {this.closeModal(); }}/>
                 </View>
+              </View>
+            </View>
               </Modal>
 
 
@@ -228,39 +224,12 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', backgroundColor: '#eeeeee' ,height : 50},
 });
 
-const modalstyles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-//    alignItems: "center",
-    marginTop: 22,
-  },
-  modalView: {
-    margin: 10,
-    backgroundColor: "white",
-    borderRadius: 10,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
 
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5
-  },
-  openButton: {
-    backgroundColor: "#F194FF",
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center"
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center"
-  },
+const mapStateToProps = (state) => ({
+    user: state.AuthenticationReducer.user,
 });
 
+
+export default connect(
+    mapStateToProps
+)(GenerateInvoiceScreen);

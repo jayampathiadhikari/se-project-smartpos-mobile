@@ -1,4 +1,4 @@
-import React,{Component} from 'react';
+import React from 'react';
 import {View,Text} from 'react-native';
 const axios = require('axios');
 
@@ -15,7 +15,7 @@ export default class ShopDetailsScreen extends React.Component {
 
    getShopDetails=()=>{
           axios.post("https://se-smartpos-backend.herokuapp.com/shop/viewshopdetails",
-          {shop_id:14})
+          {shop_id:this.props.navigation.getParam('shop_id')})
          .then( (response)=> {
              if (response.data.success){
                 this.setState({shopDetails: response.data.data});
@@ -29,7 +29,7 @@ export default class ShopDetailsScreen extends React.Component {
    render() {
         const  state = this.state;
 
-        if (Object.keys(state.shopDetails).length==0){
+        if (Object.keys(state.shopDetails).length===0){
         return (
             <View style={{flex: 1,alignItems: 'center',justifyContent: 'center',}} >
                   <Text style={{fontWeight:'bold',fontSize:32}}> Loading... </Text>
