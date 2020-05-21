@@ -29,6 +29,10 @@ import FlyTo from "../screens/FlyTo";
 import {createDrawerNavigator} from "react-navigation-drawer";
 import loginScreen from "../screens/login";
 import authLoadingScreen from "../screens/authLoadingScreen";
+import myAccountScreen from "../screens/myAccountScreen";
+import othersAccountScreen from "../screens/othersAccountScreen";
+import editAccountDetails from "../screens/editAccountDetails";
+import othersAccountProfile from "../screens/othersAccountProfile";
 
 const shopTopNavigator = createMaterialTopTabNavigator({
   Details: {
@@ -53,6 +57,30 @@ const shopTopNavigator = createMaterialTopTabNavigator({
     screen: cashDrawerScreen,
     navigationOptions: {
       title: 'Cash Drawer',
+    },
+  }
+}, {
+  tabBarOptions: {indicatorStyle: {backgroundColor: "#ffffff"}}
+//defaultNavigationOptions:{
+//    activeColor: '#f0edf6',
+//            inactiveColor: '#3e2465',
+//            barStyle: { backgroundColor: '#694fad' },
+//
+//}
+
+});
+
+const accountTopNavigator = createMaterialTopTabNavigator({
+  My_account: {
+    screen: myAccountScreen,
+    navigationOptions: {
+      title: 'My Profile',
+    },
+  },
+  Others_accounts: {
+    screen: othersAccountScreen,
+    navigationOptions: {
+      title: 'Others details',
     },
   }
 }, {
@@ -111,6 +139,19 @@ const routesStackNavigator = createStackNavigator(
   }
 );
 
+const accountStackNavigator = createStackNavigator(
+  {
+    AccountHome: accountTopNavigator,
+    EditAccount: editAccountDetails,
+    ShowOthersAccount: othersAccountProfile,
+  }, {
+    initialRouteName: 'AccountHome',
+    defaultNavigationOptions: {
+      headerTitleAlign: 'center'
+    }
+  }
+);
+
 
 const TabNavigator = createBottomTabNavigator(
   {
@@ -142,7 +183,7 @@ const TabNavigator = createBottomTabNavigator(
       }
     },
     Account: {
-      screen: userAccountScreen,
+      screen: accountStackNavigator,
       navigationOptions: {
         tabBarLabel: 'Account',
         tabBarIcon: ({tintColor}) => (
