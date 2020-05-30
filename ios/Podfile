@@ -36,6 +36,10 @@ target 'mobile' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+  pod 'react-native-view-shot', :path => '../node_modules/react-native-view-shot'
+
+  pod 'react-native-cameraroll', :path => '../node_modules/@react-native-community/cameraroll'
+
   target 'mobileTests' do
     inherit! :search_paths
     # Pods for testing
