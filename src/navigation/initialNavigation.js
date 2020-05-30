@@ -47,18 +47,19 @@ const shopTopNavigator = createMaterialTopTabNavigator({
       title: 'Sales',
     },
   },
-  New_Invoice: {
-    screen: generateInvoiceScreen,
-    navigationOptions: {
-      title: 'New Invoice',
-    },
-  },
   Cash_drawer: {
     screen: cashDrawerScreen,
     navigationOptions: {
       title: 'Cash Drawer',
     },
+  },
+  New_Invoice: {
+    screen: generateInvoiceScreen,
+    navigationOptions: {
+      title: 'New Invoice',
+    },
   }
+
 },{
   defaultNavigationOptions: ({ navigation }) => {
     return {
