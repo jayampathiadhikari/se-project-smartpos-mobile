@@ -59,15 +59,24 @@ const shopTopNavigator = createMaterialTopTabNavigator({
       title: 'Cash Drawer',
     },
   }
-}, {
-  tabBarOptions: {indicatorStyle: {backgroundColor: "#ffffff"}}
-//defaultNavigationOptions:{
-//    activeColor: '#f0edf6',
-//            inactiveColor: '#3e2465',
-//            barStyle: { backgroundColor: '#694fad' },
-//
-//}
-
+},{
+  defaultNavigationOptions: ({ navigation }) => {
+    return {
+      tabBarOptions:{
+        style: {
+          backgroundColor: 'black',
+          elevation: 0, // remove shadow on Android
+          shadowOpacity: 0, // remove shadow on iOS,
+          borderWidth:1,
+          borderColor:'#ccc'
+        },
+        labelStyle: {
+          fontSize: 15,
+          fontWeight : '700'
+        }
+      },
+    };
+  }
 });
 
 const accountTopNavigator = createMaterialTopTabNavigator({
@@ -83,15 +92,6 @@ const accountTopNavigator = createMaterialTopTabNavigator({
       title: 'Others details',
     },
   }
-}, {
-  tabBarOptions: {indicatorStyle: {backgroundColor: "#ffffff"}}
-//defaultNavigationOptions:{
-//    activeColor: '#f0edf6',
-//            inactiveColor: '#3e2465',
-//            barStyle: { backgroundColor: '#694fad' },
-//
-//}
-
 });
 
 const DrawerNav = createDrawerNavigator({
@@ -130,14 +130,23 @@ const routesStackNavigator = createStackNavigator(
   {
     RoutesList: routesListScreen,
     Route: DrawerNav,
-    ShopHome: shopTopNavigator,
-  }, {
+    ShopHome:{
+      screen:shopTopNavigator,
+      navigationOptions :({navigation})=>{
+        return {headerTitle: navigation.getParam('shop_name').toUpperCase()}
+      }
+
+      }
+      ,
+  },
+    {
     initialRouteName: 'RoutesList',
     defaultNavigationOptions: {
       headerTitleAlign: 'center'
     }
   }
 );
+
 
 const accountStackNavigator = createStackNavigator(
   {
