@@ -1,5 +1,6 @@
 import axios from 'axios';
 import auth from '@react-native-firebase/auth';
+import {Alert} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {MAPBOX_TOKEN} from "./constants/constants";
 
@@ -140,4 +141,34 @@ export const getRouteByWaypoints = async (waypointsArray) => {
 export const getWaypointsArray = (shops) => {
   console.log (shops.map(shop => [shop.longitude,shop.latitude]),'waypoint')
   return (shops.map(shop => [shop.longitude,shop.latitude]))
+};
+
+export const showOtherUsers = async (agentID) => {
+  const queryRef = firestore().collection("users").where("supervisorUid", "==", agentID);
+  const querySnap = await queryRef.get();
+  const salesperson = [];
+  querySnap.docs.forEach(doc => {
+    const data = doc.data();
+    salesperson.push({name: data.firstName +" "+ data.lastName, region: data.region, email: data.email,
+    phoneNumber: data.phoneNumber, address: data.address})
+  });
+  return salesperson;
+};
+
+export const updateUser = async (key, firstName, lastName, address, phoneNumber) => {
+    const updateDBRef = firestore().collection("users").where("uid", "==", key);
+    const updateDBRefSnap = await updateDBRef.get();
+    const id = updateDBRefSnap.docs[0].id;
+    const updateDBRefUpdate = firestore().collection("users").doc(id);
+    updateDBRefUpdate.update("firstName" , firstName)
+    updateDBRefUpdate.update("lastName" , lastName)
+    updateDBRefUpdate.update("address" , address)
+    updateDBRefUpdate.update("phoneNumber" , phoneNumber)
+    .then((docRef) => {
+        console.log("Document successfully written!");
+        Alert.alert('Successfully Updated!');
+    })
+    .catch((error) => {
+      console.error("Error: ", error);
+    });
 };

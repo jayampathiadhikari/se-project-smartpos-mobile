@@ -1,50 +1,68 @@
 import React, {Component} from 'react';
-import { StyleSheet, View, Image, Text, FlatList, TextInput } from 'react-native';
+import { StyleSheet, View, Image, Text, FlatList } from 'react-native';
 import { Card, FAB, Button } from 'react-native-paper';
+import {connect} from "react-redux";
+import {showOtherUsers} from "../Utils";
 
-export default class othersAccountScreen extends React.Component {
+class othersAccountScreen extends React.Component {
+
+    state = {
+          salespersonData : []
+    };
+
+    componentDidMount = async () => {
+        const salesperson = await showOtherUsers(this.props.user.supervisorUid);
+        this.setState({
+            salespersonData: salesperson,
+        })
+    };
 
     render () {
     return (
         <View style={{flex:1}}>
-            <FlatList
-                data={data}
-                renderItem={({item})=>{
-                    return renderList(item, this.props)
-                }}
-                keyExtractor={item=>item.id}
-            />
+        {
+                  this.state.salespersonData.map((item,index) => {
+                  return (
+                  <View key={index}>
+                  <FlatList
+                    data={this.state.salespersonData}
+                    keyExtractor={item => item.index}
+                    renderItem={({ item }) =>{
+                       return renderList(item, this.props)
+                    }}
+                  />
+                  </View>
+                )})}
         </View>
     );
     }
 }
-        const data=[
-            {id:"1",name:"Mukesh",email:"abcd@abc.com",salary:"6 lpa",phone:"12345",position:"Matara",picture:"../assets/logo-pos-600.png"},
-            {id:"2",name:"Ramesh",email:"abcd@abc.com",salary:"5 lpa",phone:"12345",position:"Galle",picture:"../assets/logo-pos-600.png"},
-            {id:"3",name:"Mahesh",email:"abcd@abc.com",salary:"5 lpa",phone:"12345",position:"Weligama",picture:"../assets/logo-pos-600.png"},
-            {id:"4",name:"Nimesh",email:"abcd@abc.com",salary:"5 lpa",phone:"12345",position:"Matara",picture:"../assets/logo-pos-600.png"},
-            {id:"5",name:"Suresh",email:"abcd@abc.com",salary:"5 lpa",phone:"12345",position:"Galle",picture:"../assets/logo-pos-600.png"},
-            {id:"6",name:"Mukesh",email:"abcd@abc.com",salary:"5 lpa",phone:"12345",position:"Matara",picture:"../assets/logo-pos-600.png"},
-            {id:"7",name:"Ramesh",email:"abcd@abc.com",salary:"5 lpa",phone:"12345",position:"Galle",picture:"../assets/logo-pos-600.png"},
-            {id:"8",name:"Mahesh",email:"abcd@abc.com",salary:"5 lpa",phone:"12345",position:"Weligama",picture:"../assets/logo-pos-600.png"},
-            {id:"9",name:"Nimesh",email:"abcd@abc.com",salary:"5 lpa",phone:"12345",position:"Matara",picture:"../assets/logo-pos-600.png"},
-            {id:"10",name:"Suresh",email:"abcd@abc.com",salary:"5 lpa",phone:"12345",position:"Galle",picture:"../assets/logo-pos-600.png"}
-        ]
         const renderList = ((item, props)=>{
             return(
                 <Card style={styles.mycard} onPress={() => props.navigation.navigate("ShowOthersAccount",item)}>
                     <View style={styles.cardView}>
-                        <Image style={styles.image} source={require('../assets/logo-pos-600.png')}/>
+                        <Image style={styles.image} source={require('../assets/default-profile.jpg')}/>
                         <View style={styles.textStyle}>
                             <Text style={{fontSize:20}}>{item.name}</Text>
-                            <Text>{item.position}</Text>
+                            <Text>{item.region}</Text>
                         </View>
                     </View>
                 </Card>
             );
         })
 
+const mapStateToProps = (state) => ({
+  user: state.AuthenticationReducer.user,
+});
 
+const bindAction = (dispatch) => ({
+
+});
+
+export default connect(
+  mapStateToProps,
+  bindAction
+)(othersAccountScreen);
 
 const styles = StyleSheet.create({
     mycard: {

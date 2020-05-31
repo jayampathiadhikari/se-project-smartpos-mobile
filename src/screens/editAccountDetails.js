@@ -3,16 +3,24 @@ import { StyleSheet, View, Text, Modal, Alert} from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
+import {connect} from 'react-redux';
+import {updateUser} from "../Utils";
 
-const CreateEmployee =() => {
-        const [Name, setName] = useState("")
-        const [Phone, setPhone] = useState("")
-        const [email, setEmail] = useState("")
-        const [salary, setSalary] = useState("")
-        const [picture, setPicture] = useState("")
-        const [modal, setModal] = useState(false)
+class editAccountDetails extends React.Component {
 
-        const pickFromGallery = async () => {
+    constructor(props) {
+      super(props);
+      this.state = {
+        firstName: this.props.user.firstName,
+        lastName: this.props.user.lastName,
+        address: this.props.user.address,
+        phoneNumber: this.props.user.phoneNumber,
+        picture: "",
+        modal: false
+      }
+    }
+
+        pickFromGallery = async () => {
             const {granted} = await Permissions.askAsync(Permissions.CAMERA_ROLL)
             if (granted){
                 let data = await ImagePicker.launchImageLibraryAsync({
@@ -27,14 +35,14 @@ const CreateEmployee =() => {
                         type:`test/${data.uri.split(".")[1]}`,
                         name:`test.${data.uri.split(".")[1]}`
                     }
-                    handleUpload(newfile)
+                    this.handleUpload(newfile)
                 }
             }else{
                 Alert.alert("You need to give permission to access the Gallery")
             }
         }
 
-        const pickFromCamera = async () => {
+        pickFromCamera = async () => {
             const {granted} = await Permissions.askAsync(Permissions.CAMERA)
             if (granted){
                 let data = await ImagePicker.launchCameraAsync({
@@ -49,14 +57,14 @@ const CreateEmployee =() => {
                         type:`test/${data.uri.split(".")[1]}`,
                         name:`test.${data.uri.split(".")[1]}`
                     }
-                    handleUpload(newfile)
+                    this.handleUpload(newfile)
                 }
             }else{
                 Alert.alert("You need to give permission to access the Camera")
             }
         }
 
-        const handleUpload = (image)=>{
+        handleUpload = (image)=>{
             const data = new FormData()
             data.append('file',image)
             data.append('upload_preset','employeeApp')
@@ -68,69 +76,97 @@ const CreateEmployee =() => {
             }).then(res=>res.json()).
             then(data=>{
                 console.log(data)
-                setPicture(data.url)
-                setModal(false)
+                this.setPicture(data.url)
+                this.setModalFalse()
             })
         }
 
+        setFirstName=(text)=>{
+            this.setState({firstName:text});
+        }
+        setLastName=(text)=>{
+            this.setState({lastName:text});
+        }
+        setAddress=(text)=>{
+            this.setState({address:text});
+        }
+        setPhone=(text)=>{
+            this.setState({phoneNumber:text});
+        }
+        setPicture=(text)=>{
+            this.setState({picture:text});
+        }
+        setModalTrue=()=>{
+            this.setState({modal:true});
+        }
+        setModalFalse=()=>{
+            this.setState({modal:false});
+        }
+
+    render(){
         return (
             <View style={styles.root}>
                 <TextInput
-                    label='Name'
+                    label='First Name'
                     style={styles.inputStyle}
-                    value={Name}
+                    value={this.state.firstName}
+                    placeholder={this.props.user.firstName}
                     theme={theme}
                     mode="outlined"
-                    onChangeText={text => setName(text)}
+                    onChangeText ={(text)=>{this.setFirstName(text)}}
                 />
                 <TextInput
-                    label='Email'
+                    label='Last Name'
                     style={styles.inputStyle}
-                    value={email}
+                    value={this.state.lastName}
+                    placeholder={this.props.user.lastName}
                     theme={theme}
                     mode="outlined"
-                    onChangeText={text => setEmail(text)}
+                    onChangeText={(text)=>{this.setLastName(text)}}
                 />
                 <TextInput
-                    label='Phone'
+                    label='Home Address'
                     style={styles.inputStyle}
-                    value={Phone}
+                    value={this.state.address}
+                    placeholder={this.props.user.address}
+                    theme={theme}
+                    mode="outlined"
+                    onChangeText={(text)=>{this.setAddress(text)}}
+                />
+                <TextInput
+                    label='Phone Number'
+                    style={styles.inputStyle}
+                    value={this.state.phoneNumber}
+                    placeholder={this.props.user.phoneNumber}
                     theme={theme}
                     keyboardType= "number-pad"
                     mode="outlined"
-                    onChangeText={text => setPhone(text)}
+                    onChangeText={(text)=>{this.setPhone(text)}}
                 />
-                <TextInput
-                    label='Salary'
-                    style={styles.inputStyle}
-                    value={salary}
-                    theme={theme}
-                    mode="outlined"
-                    onChangeText={text => setSalary(text)}
-                />
-                <Button style={styles.inputStyle} icon={picture==""?"upload":"check"} mode="contained" theme={theme} onPress={() => setModal(true)}>
+                <Button style={styles.inputStyle} icon={this.state.picture==""?"upload":"check"} mode="contained" theme={theme} onPress={() => this.setModalTrue()}>
                     Upload Image
                 </Button>
-                <Button style={styles.inputStyle} icon="content-save" mode="contained" theme={theme} onPress={() => console.log("save")}>
+                <Button style={styles.inputStyle} icon="content-save" mode="contained" theme={theme} onPress={() =>updateUser (this.props.user.uid, this.state.firstName, this.state.lastName, this.state.address, this.state.phoneNumber)}>
                     Save
                 </Button>
-                <Modal animationType="slide" transparent={true} visible={modal} onRequestClose={()=>{setModal(false)}}>
+                <Modal animationType="slide" transparent={true} visible={this.state.modal} onRequestClose={() => this.setModalFalse()}>
                     <View style={styles.modalView}>
                         <View style={styles.modalButtonView}>
-                            <Button icon="camera" theme={theme} mode="contained" onPress={() => pickFromCamera()}>
+                            <Button icon="camera" theme={theme} mode="contained" onPress={() => this.pickFromCamera()}>
                                 Camera
                             </Button>
-                            <Button icon="image-area" theme={theme} mode="contained" onPress={() => pickFromGallery()}>
+                            <Button icon="image-area" theme={theme} mode="contained" onPress={() => this.pickFromGallery()}>
                                 Gallery
                             </Button>
                         </View>
-                        <Button theme={theme} onPress={() => setModal(false)}>
+                        <Button theme={theme} onPress={() => this.setModalFalse()}>
                             Cancel
                         </Button>
                     </View>
                 </Modal>
             </View>
         );
+    }
 }
 
 const theme = {
@@ -160,4 +196,15 @@ const styles = StyleSheet.create({
     }
 });
 
-export default CreateEmployee
+const mapStateToProps = (state) => ({
+  user: state.AuthenticationReducer.user,
+});
+
+const bindAction = (dispatch) => ({
+
+});
+
+export default connect(
+  mapStateToProps,
+  bindAction
+)(editAccountDetails);
