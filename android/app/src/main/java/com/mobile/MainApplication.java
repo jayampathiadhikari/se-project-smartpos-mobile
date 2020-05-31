@@ -11,6 +11,8 @@ import org.unimodules.core.interfaces.SingletonModule;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.cameraroll.CameraRollPackage;
+import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
