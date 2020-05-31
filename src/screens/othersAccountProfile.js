@@ -9,12 +9,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 export default class othersAccountProfile extends React.Component {
 
     openDial () {
-        if(Platform.OS === "android"){
-            Linking.openURL("tel:12345")
-        }else{
-            Linking.openURL("telprompt:12345")
+            if(Platform.OS === "android"){
+                Linking.openURL('tel:'+this.props.navigation.getParam('phoneNumber'))
+            }else{
+                Linking.openURL('telprompt:'+this.props.navigation.getParam('phoneNumber'))
+            }
         }
-    }
 
     static navigationOptions = ({navigation}) => {
             // const{ params} = navigation.state;
@@ -31,13 +31,13 @@ export default class othersAccountProfile extends React.Component {
                     style={{height:"20%"}}
                 />
                 <View style={styles.imageContainer}>
-                    <Image style={styles.image} source={require('../assets/logo-pos-600.png')}/>
+                    <Image style={styles.image} source={require('../assets/default-profile.jpg')}/>
                 </View>
                 <View style={{alignItems:"center", margin:15}}>
                     <Title>{this.props.navigation.getParam('name')}</Title>
-                    <Text style={{fontSize:18}}>{this.props.navigation.getParam('position')}</Text>
+                    <Text style={{fontSize:18}}>{this.props.navigation.getParam('region')}</Text>
                 </View>
-                <Card style={styles.myCard} onPress={()=>{Linking.openURL("mailto:someone@example.com")}} >
+                <Card style={styles.myCard} onPress={()=>{Linking.openURL('mailto:'+this.props.navigation.getParam('email'))}} >
                     <View style={styles.cardContent}>
                         <Ionicons name="ios-mail" size={32} color="#4c57ed" />
                         <Text style={styles.mytext}>{this.props.navigation.getParam('email')}</Text>
@@ -46,19 +46,20 @@ export default class othersAccountProfile extends React.Component {
                 <Card style={styles.myCard} onPress={this.openDial.bind(this)} >
                     <View style={styles.cardContent}>
                         <Ionicons name="ios-call" size={32} color="#4c57ed" />
-                        <Text style={styles.mytext}>{this.props.navigation.getParam('phone')}</Text>
+                        <Text style={styles.mytext}>{this.props.navigation.getParam('phoneNumber')}</Text>
                     </View>
                 </Card>
                 <Card style={styles.myCard}>
                     <View style={styles.cardContent}>
-                        <Ionicons name="logo-usd" size={32} color="#4c57ed" />
-                        <Text style={styles.mytext}>{this.props.navigation.getParam('salary')}</Text>
+                        <Ionicons name="ios-home" size={32} color="#4c57ed" />
+                        <Text style={styles.mytext}>{this.props.navigation.getParam('address')}</Text>
                     </View>
                 </Card>
             </View>
         );
     }
 }
+
 
 const theme = {
     colors:{
