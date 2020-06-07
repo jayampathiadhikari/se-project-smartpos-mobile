@@ -7,7 +7,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 const axios = require('axios');
 
 
-class StockScreen extends Component {
+export class StockScreen extends Component {
 
     state = {
         onceFetched: false,
@@ -67,7 +67,7 @@ class StockScreen extends Component {
         }
 
         return (
-            <View style={{padding: 16}}>
+            <View style={{padding: 16}} className='MainView'>
                 <Text style={styles.textTopic}>STOCK ON HAND</Text>
 
                 <View style={styles.buttonContainer}>
