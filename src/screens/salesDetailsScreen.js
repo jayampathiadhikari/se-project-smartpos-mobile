@@ -32,21 +32,24 @@ export default class SalesDetails extends Component {
             {shop_id: this.props.navigation.getParam('shop_id')})
             .then((response) => {
                 if (response.data.success) {
-                    let invoices = []
-                    response.data.data.map((invoice) => {
-                        invoices.push({
-                            id: invoice.invoice_id,
-                            date: invoice.issued_date,
-                            total: invoice.invoice_value,
-                            due: (invoice.invoice_value - invoice.paid_amount)
-                        });
-                    });
-                    const sorted = invoices.sort(function IHaveAName(a, b) {
-                        return b.id < a.id ? 1
-                            : b.id > a.id ? -1
-                                : 0;
-                    });
-                    this.sortInvoiceDetails(sorted);
+                    const formattedInvoices=this.formatInvoiceDetails(response.data.data);
+                    const invoicesSortedById =this.sortInvoicesById(formattedInvoices);
+                    this.sortInvoicesByState(invoicesSortedById);
+                    // let invoices = []
+                    // response.data.data.map((invoice) => {
+                    //     invoices.push({
+                    //         id: invoice.invoice_id,
+                    //         date: invoice.issued_date,
+                    //         total: invoice.invoice_value,
+                    //         due: (invoice.invoice_value - invoice.paid_amount)
+                    //     });
+                    // });
+                    // const sorted = invoices.sort(function IHaveAName(a, b) {
+                    //     return b.id < a.id ? 1
+                    //         : b.id > a.id ? -1
+                    //             : 0;
+                    // });
+                    // this.sortInvoiceDetails(sorted);
                 }
             })
             .catch(function (error) {
@@ -55,11 +58,33 @@ export default class SalesDetails extends Component {
 
     };
 
-    sortInvoiceDetails=(tableData)=>{
+    formatInvoiceDetails=(invoiceDetails)=>{
+        let invoices = []
+        invoiceDetails.map((invoice) => {
+            invoices.push({
+                id: invoice.invoice_id,
+                date: invoice.issued_date,
+                total: invoice.invoice_value,
+                due: (invoice.invoice_value - invoice.paid_amount)
+            });
+        });
+
+        return invoices
+    }
+    sortInvoicesById=(invoices)=>{
+        const invoicesSortedByID = invoices.sort(function sortById(a, b) {
+                return b.id < a.id ? 1
+                    : b.id > a.id ? -1
+                        : 0;
+            });
+        return invoicesSortedByID
+    }
+
+    sortInvoicesByState=(invoices)=>{
         const Top=[];
         const Res=[];
 
-        tableData.map((invoice)=>{
+        invoices.map((invoice)=>{
             if (invoice.due===0){
                 Res.push(invoice);
             }else{
@@ -90,7 +115,7 @@ export default class SalesDetails extends Component {
                         });
                         return {list};
                     }, () => {
-                        this.sortInvoiceDetails(this.state.tableData);
+                        this.sortInvoicesByState(this.state.tableData);
                         this.closeDeuAmountModal();
 
                         Alert.alert('Successfully Updated')
@@ -186,7 +211,7 @@ export default class SalesDetails extends Component {
 
         return (
 
-            // Return a table with available products in the stock in hand
+            // Return a table with invoices details
             <ScrollView style={styles.root}>
                 <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end', justifyContent: "flex-end"}}>
                     <Button icon={

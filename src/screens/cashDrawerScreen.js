@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
 import {Button} from 'react-native-elements';
-import {LinearGradient} from "expo-linear-gradient";
+import LinearGradient from 'react-native-linear-gradient';
 const axios = require('axios');
 
 export default class cashDrawersScreen extends React.Component {
