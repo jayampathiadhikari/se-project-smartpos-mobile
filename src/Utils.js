@@ -3,6 +3,7 @@ import auth from '@react-native-firebase/auth';
 import {Alert} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {MAPBOX_TOKEN} from "./constants/constants";
+import storage from '@react-native-firebase/storage';
 
 export const getRoutesForSalesperson = async (salesperson_id) => {
   const res = await axios.post('https://se-smartpos-backend.herokuapp.com/route/get-all-routes', {
@@ -143,15 +144,26 @@ export const getWaypointsArray = (shops) => {
   return (shops.map(shop => [shop.longitude,shop.latitude]))
 };
 
+getImages = async (email) => {
+    let data;
+    return await storage().ref('images/'+email).getDownloadURL().then((url) => {return data = url}).catch(e=>{console.log(e);});
+}
+
 export const showOtherUsers = async (agentID) => {
   const queryRef = firestore().collection("users").where("supervisorUid", "==", agentID);
   const querySnap = await queryRef.get();
   const salesperson = [];
   querySnap.docs.forEach(doc => {
     const data = doc.data();
+    getImages(data.email).then((result)=>{
+
+      console.log(salesperson, "YYYY")
+      console.log(result, "UUUUUU");
+    })
     salesperson.push({name: data.firstName +" "+ data.lastName, region: data.region, email: data.email,
-    phoneNumber: data.phoneNumber, address: data.address})
+    phoneNumber: data.phoneNumber, address: data.address, pic: getImages(data.email)})
   });
+  console.log(salesperson, "XXXXXX")
   return salesperson;
 };
 

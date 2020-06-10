@@ -5,8 +5,24 @@ import * as Permissions from 'expo-permissions';
 import {LinearGradient} from 'expo-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {connect} from "react-redux";
+import storage from '@react-native-firebase/storage';
 
 class myAccountScreen extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            picture: ""
+        }
+    }
+
+    async componentDidMount() {
+        const url = await storage()
+            .ref('images/'+this.props.user.email)
+            .getDownloadURL()
+            .then(url => {this.setState({picture: url});})
+            .catch(e=>{console.log(e);});
+    }
 
     openDial () {
         if(Platform.OS === "android"){
@@ -24,11 +40,17 @@ class myAccountScreen extends React.Component {
       };
 
     render () {
+        let image;
+        if (this.state.picture == "") {
+            image = <Image style={styles.image} source={require('../assets/default-profile.jpg')}/>;
+        } else {
+            image = <Image style={styles.image} source={{ uri: this.state.picture }}/>;
+        }
         return (
             <SafeAreaView style={styles.root}>
                 <ScrollView>
                     <View style={styles.imageContainer}>
-                        <Image style={styles.image} source={ require('../assets/default-profile.jpg')  }/>
+                        {image}
                     </View>
                     <View style={{alignItems:"center"}}>
                         <Title>{this.props.user.firstName} {this.props.user.lastName}</Title>
@@ -54,10 +76,7 @@ class myAccountScreen extends React.Component {
                     </Card>
                     <View style={{flexDirection:"row", justifyContent:"space-around", padding:10}}>
                         <Button icon="account-edit" mode="contained" theme={theme} onPress={() => this.props.navigation.navigate("EditAccount")}>
-                            Edit
-                        </Button>
-                        <Button icon="delete" mode="contained" theme={theme} onPress={()=>console.log("press")}>
-                            Delete Profile
+                            Edit Profile
                         </Button>
                     </View>
                 </ScrollView>

@@ -3,11 +3,13 @@ import { StyleSheet, View, Image, Text, FlatList } from 'react-native';
 import { Card, FAB, Button } from 'react-native-paper';
 import {connect} from "react-redux";
 import {showOtherUsers} from "../Utils";
+import storage from '@react-native-firebase/storage';
 
 class othersAccountScreen extends React.Component {
 
     state = {
-          salespersonData : []
+          salespersonData : [],
+          picture: ""
     };
 
     componentDidMount = async () => {
@@ -21,22 +23,33 @@ class othersAccountScreen extends React.Component {
     return (
         <View style={{flex:1}}>
         {
-                  this.state.salespersonData.map((item,index) => {
-                  return (
-                  <View key={index}>
-                  <FlatList
-                    data={this.state.salespersonData}
-                    keyExtractor={item => item.index}
-                    renderItem={({ item }) =>{
-                       return renderList(item, this.props)
-                    }}
-                  />
-                  </View>
-                )})}
+        this.state.salespersonData.map((item) => {
+            return (
+                <View key={item.email}>
+                    {renderList(item, this.props)}
+                </View>
+        )})}
         </View>
     );
     }
 }
+
+    getImage = async(email) => {
+        const url= "";
+        url = await storage()
+            .ref('images/'+email)
+            .getDownloadURL()
+            .then(url => {this.setState({picture: url});})
+            .catch(e=>{console.log(e);});
+        const image = "";
+        if (url == "") {
+            image = "../assets/default-profile.jpg";
+        } else {
+            image = url;
+        }
+        return image;
+    }
+
         const renderList = ((item, props)=>{
             return(
                 <Card style={styles.mycard} onPress={() => props.navigation.navigate("ShowOthersAccount",item)}>

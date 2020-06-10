@@ -5,6 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import {connect} from 'react-redux';
 import {updateUser} from "../Utils";
+import storage from '@react-native-firebase/storage';
 
 class editAccountDetails extends React.Component {
 
@@ -20,7 +21,7 @@ class editAccountDetails extends React.Component {
       }
     }
 
-        pickFromGallery = async () => {
+        pickFromGallery = async (imgName) => {
             const {granted} = await Permissions.askAsync(Permissions.CAMERA_ROLL)
             if (granted){
                 let data = await ImagePicker.launchImageLibraryAsync({
@@ -29,20 +30,24 @@ class editAccountDetails extends React.Component {
                     aspect:[1,1],
                     quality:0.5
                 })
-                if(!data.cancelled){
-                    let newfile={
-                        uri:data.uri,
-                        type:`test/${data.uri.split(".")[1]}`,
-                        name:`test.${data.uri.split(".")[1]}`
-                    }
-                    this.handleUpload(newfile)
+                if (!data.cancelled){
+                    this.uploadImage(data.uri, imgName)
+                        .then( data => {
+                            console.log(data)
+                            this.setPicture(data.url)
+                            this.setModalFalse()
+                            Alert.alert("Successfully upload your image! Now Press SAVE");
+                        })
+                        .catch((error) => {
+                            Alert.alert(error);
+                        });
                 }
             }else{
                 Alert.alert("You need to give permission to access the Gallery")
             }
         }
 
-        pickFromCamera = async () => {
+        pickFromCamera = async (imgName) => {
             const {granted} = await Permissions.askAsync(Permissions.CAMERA)
             if (granted){
                 let data = await ImagePicker.launchCameraAsync({
@@ -51,34 +56,28 @@ class editAccountDetails extends React.Component {
                     aspect:[1,1],
                     quality:0.5
                 })
-                if(!data.cancelled){
-                    let newfile={
-                        uri:data.uri,
-                        type:`test/${data.uri.split(".")[1]}`,
-                        name:`test.${data.uri.split(".")[1]}`
-                    }
-                    this.handleUpload(newfile)
+                if (!data.cancelled){
+                    this.uploadImage(data.uri, imgName)
+                        .then( data => {
+                            console.log(data)
+                            this.setPicture(data.url)
+                            this.setModalFalse()
+                            Alert.alert("Successfully upload your image! Now Press SAVE");
+                        })
+                        .catch((error) => {
+                            Alert.alert(error);
+                        });
                 }
             }else{
                 Alert.alert("You need to give permission to access the Camera")
             }
         }
 
-        handleUpload = (image)=>{
-            const data = new FormData()
-            data.append('file',image)
-            data.append('upload_preset','employeeApp')
-            data.append("cloud_name","cloudshashini")
-
-            fetch("https://api.cloudinary.com/v1_1/cloudshashini/image/upload",{
-                method:"post",
-                body:data
-            }).then(res=>res.json()).
-            then(data=>{
-                console.log(data)
-                this.setPicture(data.url)
-                this.setModalFalse()
-            })
+        uploadImage = async (uri, imageName) => {
+            const response = await fetch(uri);
+            const blob = await response.blob();
+            var ref = storage().ref().child("images/" + imageName);
+            return ref.put(blob);
         }
 
         setFirstName=(text)=>{
@@ -101,6 +100,12 @@ class editAccountDetails extends React.Component {
         }
         setModalFalse=()=>{
             this.setState({modal:false});
+        }
+        saveEdits(saveUid, saveFirstName, saveLastName, saveAddress, savePhoneNumber){
+            updateUser(saveUid, saveFirstName, saveLastName, saveAddress, savePhoneNumber)
+            .then(() => {
+                    this.props.navigation.navigate("AccountHome", {});
+            })
         }
 
     render(){
@@ -146,16 +151,16 @@ class editAccountDetails extends React.Component {
                 <Button style={styles.inputStyle} icon={this.state.picture==""?"upload":"check"} mode="contained" theme={theme} onPress={() => this.setModalTrue()}>
                     Upload Image
                 </Button>
-                <Button style={styles.inputStyle} icon="content-save" mode="contained" theme={theme} onPress={() =>updateUser (this.props.user.uid, this.state.firstName, this.state.lastName, this.state.address, this.state.phoneNumber)}>
+                <Button style={styles.inputStyle} icon="content-save" mode="contained" theme={theme} onPress={() =>this.saveEdits (this.props.user.uid, this.state.firstName, this.state.lastName, this.state.address, this.state.phoneNumber)}>
                     Save
                 </Button>
                 <Modal animationType="slide" transparent={true} visible={this.state.modal} onRequestClose={() => this.setModalFalse()}>
                     <View style={styles.modalView}>
                         <View style={styles.modalButtonView}>
-                            <Button icon="camera" theme={theme} mode="contained" onPress={() => this.pickFromCamera()}>
+                            <Button icon="camera" theme={theme} mode="contained" onPress={() => this.pickFromCamera(this.props.user.email)}>
                                 Camera
                             </Button>
-                            <Button icon="image-area" theme={theme} mode="contained" onPress={() => this.pickFromGallery()}>
+                            <Button icon="image-area" theme={theme} mode="contained" onPress={() => this.pickFromGallery(this.props.user.email)}>
                                 Gallery
                             </Button>
                         </View>
