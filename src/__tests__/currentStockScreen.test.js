@@ -1,6 +1,6 @@
 import 'react-native';
 import React from 'react';
-import {StockScreen} from "./currentStockScreen";
+import {StockScreen} from "../screens/currentStockScreen";
 import {shallow} from "enzyme";
 // import {Provider}from 'react-redux';
 import axios from 'axios';

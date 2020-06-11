@@ -1,6 +1,6 @@
 import 'react-native';
 import React from 'react';
-import SalesDetailsScreen from "./salesDetailsScreen";
+import SalesDetailsScreen from "../screens/salesDetailsScreen";
 import {shallow} from "enzyme";
 import axios from 'axios';
 import renderer from 'react-test-renderer'

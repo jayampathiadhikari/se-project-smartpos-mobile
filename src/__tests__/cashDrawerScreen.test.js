@@ -1,6 +1,6 @@
 import 'react-native';
 import React from 'react';
-import CashDrawerScreen from "./cashDrawerScreen";
+import CashDrawerScreen from "../screens/cashDrawerScreen";
 import {shallow} from "enzyme";
 import axios from 'axios';
 import renderer from 'react-test-renderer'

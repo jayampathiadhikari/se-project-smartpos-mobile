@@ -15,7 +15,7 @@ describe ('Authentication actions',()=>{
 
 describe('Authentication reducers',()=>{
     const initialState={
-        authToken: 'akilaakilaakila',
+        token:null,
         loading: false,
         signedIn: false,
         user:null
@@ -30,7 +30,7 @@ describe('Authentication reducers',()=>{
 
 
     const expectedState_setUser={
-        authToken: 'akilaakilaakila',
+        token:null,
         loading: false,
         signedIn: false,
         user:{userId : '123456'}
@@ -45,7 +45,7 @@ describe('Authentication reducers',()=>{
 
 
     const expectedState_setToken={
-        authToken: 'token1',
+        token: 'token1',
         loading: false,
         signedIn: false,
         user:null
@@ -60,7 +60,7 @@ describe('Authentication reducers',()=>{
 
 
     const expectedState_setSignIn={
-        authToken: 'akilaakilaakila',
+        token:null,
         loading: false,
         signedIn: true,
         user:null
