@@ -4,6 +4,33 @@ import {Alert} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {MAPBOX_TOKEN} from "./constants/constants";
 
+
+export const getToken = async(employee_id) => {
+  try{
+    const result = await axios.get('https://se-smartpos-backend.herokuapp.com/api/v1/auth/employee/gettoken',{
+      params: {
+        employee_id
+      }
+    });
+    return result;
+  }catch (e) {
+    return {success: false, error: e}
+  }
+};
+
+export const generateToken = async(employee_id) => {
+  try{
+    const result = await axios.get('https://se-smartpos-backend.herokuapp.com/api/v1/auth/employee/generatetoken',{
+      params: {
+        employee_id
+      }
+    });
+    return result;
+  }catch (e) {
+    return {success: false, error: e}
+  }
+};
+
 export const getRoutesForSalesperson = async (salesperson_id) => {
   const res = await axios.post('https://se-smartpos-backend.herokuapp.com/route/get-all-routes', {
     salesperson_id
