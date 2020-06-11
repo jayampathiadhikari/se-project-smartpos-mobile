@@ -83,7 +83,8 @@ class GenerateInvoiceScreen extends Component {
             .then((response) => {
                 if (response.data.success) {
                     Alert.alert('Invoice Successfully Generated');
-                    this.displayInvoice(60);
+                    const invoice_id=response.data.data.invoice_id;
+                    this.displayInvoice(invoice_id);
 
                 } else {
                     Alert.alert('Error occured while generating invoice.Try Again 123!');
