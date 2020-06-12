@@ -7,7 +7,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 const axios = require('axios');
 
 
-class StockScreen extends Component {
+export class StockScreen extends Component {
 
     state = {
         onceFetched: false,
@@ -24,7 +24,7 @@ class StockScreen extends Component {
 
     getStockDetails = () => {
         this.setState({onceFetched: true});
-        axios.post("https://se-smartpos-backend.herokuapp.com/stock/viewsalespersonstock",
+        axios.post("https://se-smartpos-backend.herokuapp.com/api/v1/stock/viewsalespersonstock",
             {salesperson_id: this.props.user.uid})
             .then((response) => {
                 if (response.data.success) {
@@ -67,7 +67,7 @@ class StockScreen extends Component {
         }
 
         return (
-            <View style={{padding: 16}}>
+            <View style={{padding: 16}} className='MainView'>
                 <Text style={styles.textTopic}>STOCK ON HAND</Text>
 
                 <View style={styles.buttonContainer}>

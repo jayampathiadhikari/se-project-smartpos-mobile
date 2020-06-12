@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
 import {Button} from 'react-native-elements';
-import {LinearGradient} from "expo-linear-gradient";
+import LinearGradient from 'react-native-linear-gradient';
 const axios = require('axios');
 
 export default class cashDrawersScreen extends React.Component {
@@ -17,7 +17,7 @@ export default class cashDrawersScreen extends React.Component {
     };
 
     getInvoiceDetails=()=>{
-             axios.post("https://se-smartpos-backend.herokuapp.com/invoice/viewallinvoices",
+             axios.post("https://se-smartpos-backend.herokuapp.com/api/v1/invoice/viewallinvoices",
              {shop_id:this.props.navigation.getParam('shop_id')})
             .then( (response)=> {
                 if (response.data.success){

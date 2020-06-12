@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
 import {Text, View, ScrollView, TouchableOpacity, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
-
-import {routes} from '../constants/data.js'
 import {getRoutesForSalesperson} from "../Utils";
 
 

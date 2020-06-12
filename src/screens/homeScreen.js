@@ -14,7 +14,7 @@ class HomeScreen extends Component {
         entryCreated: 1,
         dailyTarget: 'None',
         modalVisible: false,
-        targetAchieved: 'None'
+        achievedTarget: 'None'
     };
 
     componentDidMount() {
@@ -29,12 +29,17 @@ class HomeScreen extends Component {
 
 
     getDailyTarget() {
-        axios.get("https://se-smartpos-backend.herokuapp.com/salesperson/getdailytarget")
+        axios.get("https://se-smartpos-backend.herokuapp.com/api/v1/salesperson/getdailytarget")
             .then((response) => {
-                var target = response.data.data.target_value;
-                if (Number.isInteger(target)) {
-                    this.setState({dailyTarget: 'Rs. ' + target});
+                if (response.data.success){
+                    const target = response.data.data.target_value;
+                    if (Number.isInteger(target)) {
+                        this.setState({dailyTarget: 'Rs. ' + target});
+                    }
+                }else{
+                    console.log(response.data.error)
                 }
+
             })
             .catch(function (error) {
                 console.log(error);
@@ -42,11 +47,15 @@ class HomeScreen extends Component {
     };
 
     getTargetAchieved() {
-        axios.get("https://se-smartpos-backend.herokuapp.com/salesperson/getdailytarget")
+        axios.get("https://se-smartpos-backend.herokuapp.com/api/v1/salesperson/gettargetachieved")
             .then((response) => {
-                let achieved = response.data.data.target_value;
-                if (Number.isInteger(achieved)) {
-                    this.setState({targetAchieved: 'Rs. ' + achieved});
+                if (response.data.success){
+                    const targetAchieved = response.data.data.target_achieved;
+                    if (Number.isInteger(targetAchieved)) {
+                        this.setState({achievedTarget: 'Rs. ' + targetAchieved});
+                    }
+                }else{
+                    console.log(response.data.error)
                 }
             })
             .catch(function (error) {
@@ -144,10 +153,10 @@ class HomeScreen extends Component {
 
     openModal = async () => {
         try {
-            const targetAchieved = await this.getTargetAchieved();
-            this.setState({modalVisible: true, targetAchieved: targetAchieved});
+            await this.getTargetAchieved();
         } catch (err) {
-            console.log(err)
+            console.log(err);
+        }finally {
             this.setState({modalVisible: true});
         }
 
@@ -190,7 +199,7 @@ class HomeScreen extends Component {
                                 ...modalstyles.modalText,
                                 color: 'green',
                                 fontWeight: 'bold'
-                            }}> {this.state.targetAchieved}</Text>
+                            }}> {this.state.achievedTarget}</Text>
                             <Button title='Back' buttonStyle={modalstyles.closeButton} onPress={() => {
                                 this.closeModal();
                             }}/>

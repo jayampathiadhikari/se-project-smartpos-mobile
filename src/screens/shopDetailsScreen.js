@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
-import {LinearGradient} from "expo-linear-gradient";
+import LinearGradient from 'react-native-linear-gradient';
 
 const axios = require('axios');
 
@@ -16,7 +16,7 @@ export default class ShopDetailsScreen extends React.Component {
     };
 
     getShopDetails = () => {
-        axios.post("https://se-smartpos-backend.herokuapp.com/shop/viewshopdetails",
+        axios.post("https://se-smartpos-backend.herokuapp.com/api/v1/shop/viewshopdetails",
             {shop_id: this.props.navigation.getParam('shop_id')})
             .then((response) => {
                 if (response.data.success) {
