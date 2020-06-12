@@ -29,7 +29,7 @@ class HomeScreen extends Component {
 
 
     getDailyTarget() {
-        axios.get("https://se-smartpos-backend.herokuapp.com/salesperson/getdailytarget")
+        axios.get("https://se-smartpos-backend.herokuapp.com/api/v1/salesperson/getdailytarget")
             .then((response) => {
                 if (response.data.success){
                     const target = response.data.data.target_value;
@@ -47,12 +47,12 @@ class HomeScreen extends Component {
     };
 
     getTargetAchieved() {
-        axios.get("https://se-smartpos-backend.herokuapp.com/salesperson/getdailytarget")
+        axios.get("https://se-smartpos-backend.herokuapp.com/api/v1/salesperson/gettargetachieved")
             .then((response) => {
                 if (response.data.success){
-                    const target = response.data.data.target_value;
-                    if (Number.isInteger(target)) {
-                        this.setState({achievedTarget: 'Rs. ' + target});
+                    const targetAchieved = response.data.data.target_achieved;
+                    if (Number.isInteger(targetAchieved)) {
+                        this.setState({achievedTarget: 'Rs. ' + targetAchieved});
                     }
                 }else{
                     console.log(response.data.error)

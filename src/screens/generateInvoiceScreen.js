@@ -30,7 +30,7 @@ class GenerateInvoiceScreen extends Component {
 
     getStockDetails = () => {
         this.setState({onceFetched: true});
-        axios.post("https://se-smartpos-backend.herokuapp.com/stock/viewsalespersonstock",
+        axios.post("https://se-smartpos-backend.herokuapp.com/api/v1/stock/viewsalespersonstock",
             {salesperson_id: this.props.user.uid})
             .then((response) => {
                 if (response.data.success) {
@@ -74,7 +74,7 @@ class GenerateInvoiceScreen extends Component {
     }
     generateInvoice = () => {
         const productsList = this.getProductsList();
-        axios.post("https://se-smartpos-backend.herokuapp.com/invoice/generateInvoice",
+        axios.post("https://se-smartpos-backend.herokuapp.com/api/v1/invoice/generateInvoice",
             {
                 salesperson_id: this.props.user.uid,
                 shop_id: this.props.navigation.getParam('shop_id'),

@@ -24,7 +24,7 @@ export class StockScreen extends Component {
 
     getStockDetails = () => {
         this.setState({onceFetched: true});
-        axios.post("https://se-smartpos-backend.herokuapp.com/stock/viewsalespersonstock",
+        axios.post("https://se-smartpos-backend.herokuapp.com/api/v1/stock/viewsalespersonstock",
             {salesperson_id: this.props.user.uid})
             .then((response) => {
                 if (response.data.success) {

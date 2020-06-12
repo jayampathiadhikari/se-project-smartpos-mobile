@@ -16,7 +16,7 @@ export default class ShopDetailsScreen extends React.Component {
     };
 
     getShopDetails = () => {
-        axios.post("https://se-smartpos-backend.herokuapp.com/shop/viewshopdetails",
+        axios.post("https://se-smartpos-backend.herokuapp.com/api/v1/shop/viewshopdetails",
             {shop_id: this.props.navigation.getParam('shop_id')})
             .then((response) => {
                 if (response.data.success) {

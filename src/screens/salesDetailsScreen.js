@@ -28,28 +28,13 @@ export default class SalesDetails extends Component {
 
     getInvoiceDetails = () => {
         this.setState({onceFetched: true});
-        axios.post("https://se-smartpos-backend.herokuapp.com/invoice/viewallinvoices",
+        axios.post("https://se-smartpos-backend.herokuapp.com/api/v1/invoice/viewallinvoices",
             {shop_id: this.props.navigation.getParam('shop_id')})
             .then((response) => {
                 if (response.data.success) {
                     const formattedInvoices=this.formatInvoiceDetails(response.data.data);
                     const invoicesSortedById =this.sortInvoicesById(formattedInvoices);
                     this.sortInvoicesByState(invoicesSortedById);
-                    // let invoices = []
-                    // response.data.data.map((invoice) => {
-                    //     invoices.push({
-                    //         id: invoice.invoice_id,
-                    //         date: invoice.issued_date,
-                    //         total: invoice.invoice_value,
-                    //         due: (invoice.invoice_value - invoice.paid_amount)
-                    //     });
-                    // });
-                    // const sorted = invoices.sort(function IHaveAName(a, b) {
-                    //     return b.id < a.id ? 1
-                    //         : b.id > a.id ? -1
-                    //             : 0;
-                    // });
-                    // this.sortInvoiceDetails(sorted);
                 }
             })
             .catch(function (error) {
@@ -96,7 +81,7 @@ export default class SalesDetails extends Component {
 
 
     updateDatabasePaidAmount = (invoice_id, amountReceived) => {
-        axios.put("https://se-smartpos-backend.herokuapp.com/invoice/updateinvoicepaidamount",
+        axios.put("https://se-smartpos-backend.herokuapp.com/api/v1/invoice/updateinvoicepaidamount",
             {
                 "amount_received": amountReceived,
                 "invoice_id": invoice_id
