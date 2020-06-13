@@ -91,8 +91,12 @@ class HomeScreen extends Component {
         this.requestLocationPermission().then(hasLocationPermission => {
             if (hasLocationPermission) {
                 Geolocation.getCurrentPosition(
-                    (position) => {
-                        console.log('CURRENT POSITION', position)
+                    async(lastPosition) => {
+                        console.log('CURRENT POSITION', lastPosition)
+                        const ts = new Date(lastPosition.timestamp);
+                        const geoPoint = new firestore.GeoPoint(lastPosition.coords.latitude, lastPosition.coords.longitude);
+                        console.log(geoPoint,'POINT UPDATED');
+                        await this.updateLocationDetails(ts, geoPoint);
                     },
                     (error) => {
                         // See error code charts below.

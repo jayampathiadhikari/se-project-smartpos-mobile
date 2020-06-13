@@ -1238,10 +1238,10 @@
   resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-6.7.1.tgz#f0ccf73b51d73b31e7c9b8896979fa9a129583e3"
   integrity sha512-hODzL694Ar/ao8EAW6QNbYJsqJXyaV7Qzku7TlJop2kIIs+UVzTcSGfnkfrTSJ2wW0ka6sM45asxmfuLkyz0eA==
 
-"@react-native-firebase/storage@^6.3.4":
-  version "6.7.1"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/storage/-/storage-6.7.1.tgz#fe5c99e8fac55529869ff502ecb775f87e9eca2a"
-  integrity sha512-NqiwgOaYIPlxUn2Ith/bJNBy4aV0MNAKmWLzRxnW7rczz6BxtLbKC46NVzlA3S2LKaE3Abbx74dFisiOhp9vBA==
+"@react-native-firebase/storage@^7.1.2":
+  version "7.1.4"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/storage/-/storage-7.1.4.tgz#1be6c53381440dc1ad4b5252e14b06cded37d637"
+  integrity sha512-o4II2QQJEBqYTyiQe03qtLDsdzCKcCV/EFn323JGNa8w+NCBM/6LstkCUmFnwfrO5Lb9Pyb5Jixpwjwe0n+UvQ==
 
 "@react-native-mapbox-gl/maps@^8.0.0-rc3":
   version "8.0.0-rc3"
@@ -6689,9 +6689,9 @@ react-native-elements@^1.2.7:
     react-native-status-bar-height "^2.2.0"
 
 react-native-geolocation-service@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-geolocation-service/-/react-native-geolocation-service-4.0.0.tgz#257187ea08965dac16016edd383454d310eb7809"
-  integrity sha512-t62cwQdMjlTLFCjJ1Kr924YIV3WMzQ6KgqEdrICaN2fHdTIjzW8mwoPGFqACu2WtPHLL6btIVG10dYHV7zntHQ==
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-geolocation-service/-/react-native-geolocation-service-4.0.2.tgz#b107bf2bd6e794d072a3be9c0325a27a41028568"
+  integrity sha512-9GtIVVoLJm03rGx5wFrkHp8IQKfAoBpswzG1SRPXGGTgVxz/S11w8PzIk5IEWXU+Nuln3vJN1T6UtvUjAK9ZsA==
   dependencies:
     "@react-native-community/geolocation" "^1.4.2"
 
