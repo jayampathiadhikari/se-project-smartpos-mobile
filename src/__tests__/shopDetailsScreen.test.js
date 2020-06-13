@@ -12,9 +12,11 @@ describe('Shop details screen',()=> {
 
     beforeEach(() => {
         wrapper =shallow(<ShopDetailsScreen navigation={{ getParam: jest.fn() }}/>,{ disableLifecycleMethods: true });
+        wrapper.instance()._isMounted=true;
     },5);
 
     afterEach(() => {
+        wrapper.instance()._isMounted=false;
         wrapper.unmount();
     },5);
 
