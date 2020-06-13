@@ -40,10 +40,10 @@ export default class othersAccountProfile extends React.Component {
 
     render () {
         let image;
-        if (this.state.picture == "") {
-            image = <Image style={styles.image} source={require('../assets/default-profile.jpg')}/>;
+        if (this.props.navigation.getParam('imageUri')) {
+            image = <Image style={styles.image} source={{ uri: this.props.navigation.getParam('imageUri')}}/>;
         } else {
-            image = <Image style={styles.image} source={{ uri: this.state.picture }}/>;
+            image = <Image style={styles.image} source={require('../assets/default-profile.jpg')}/>;
         }
         return (
             <View style={styles.root} >

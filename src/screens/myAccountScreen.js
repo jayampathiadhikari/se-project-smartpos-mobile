@@ -41,10 +41,10 @@ class myAccountScreen extends React.Component {
 
     render () {
         let image;
-        if (this.state.picture == "") {
-            image = <Image style={styles.image} source={require('../assets/default-profile.jpg')}/>;
+        if (this.props.user.imageUri) {
+            image = <Image style={styles.image} source={{ uri: this.props.user.imageUri }}/>;
         } else {
-            image = <Image style={styles.image} source={{ uri: this.state.picture }}/>;
+            image = <Image style={styles.image} source={require('../assets/default-profile.jpg')}/>;
         }
         return (
             <SafeAreaView style={styles.root}>
@@ -78,6 +78,9 @@ class myAccountScreen extends React.Component {
                         <Button icon="account-edit" mode="contained" theme={theme} onPress={() => this.props.navigation.navigate("EditAccount")}>
                             Edit Profile
                         </Button>
+                        <Button icon="logout" mode="contained" theme={theme} onPress={() => console.log("Pressed")}>
+                            Logout
+                        </Button>
                     </View>
                 </ScrollView>
             </SafeAreaView>
@@ -90,7 +93,7 @@ const mapStateToProps = (state) => ({
 });
 
 const bindAction = (dispatch) => ({
-
+    setUser: (user) => dispatch(setUser(user)),
 });
 
 export default connect(

@@ -144,30 +144,19 @@ export const getWaypointsArray = (shops) => {
   return (shops.map(shop => [shop.longitude,shop.latitude]))
 };
 
-getImages = async (email) => {
-    let data;
-    return await storage().ref('images/'+email).getDownloadURL().then((url) => {return data = url}).catch(e=>{console.log(e);});
-}
-
 export const showOtherUsers = async (agentID) => {
   const queryRef = firestore().collection("users").where("supervisorUid", "==", agentID);
   const querySnap = await queryRef.get();
   const salesperson = [];
   querySnap.docs.forEach(doc => {
     const data = doc.data();
-    getImages(data.email).then((result)=>{
-
-      console.log(salesperson, "YYYY")
-      console.log(result, "UUUUUU");
-    })
     salesperson.push({name: data.firstName +" "+ data.lastName, region: data.region, email: data.email,
-    phoneNumber: data.phoneNumber, address: data.address, pic: getImages(data.email)})
+    phoneNumber: data.phoneNumber, address: data.address, imageUri: data.imageUri })
   });
-  console.log(salesperson, "XXXXXX")
   return salesperson;
 };
 
-export const updateUser = async (key, firstName, lastName, address, phoneNumber) => {
+export const updateUser = async (key, firstName, lastName, address, phoneNumber, imageUri) => {
     const updateDBRef = firestore().collection("users").where("uid", "==", key);
     const updateDBRefSnap = await updateDBRef.get();
     const id = updateDBRefSnap.docs[0].id;
@@ -176,6 +165,7 @@ export const updateUser = async (key, firstName, lastName, address, phoneNumber)
     updateDBRefUpdate.update("lastName" , lastName)
     updateDBRefUpdate.update("address" , address)
     updateDBRefUpdate.update("phoneNumber" , phoneNumber)
+    updateDBRefUpdate.update("imageUri" , imageUri)
     .then((docRef) => {
         console.log("Document successfully written!");
         Alert.alert('Successfully Updated!');

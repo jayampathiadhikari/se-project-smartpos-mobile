@@ -7,62 +7,51 @@ import storage from '@react-native-firebase/storage';
 
 class othersAccountScreen extends React.Component {
 
-    state = {
-          salespersonData : [],
-          picture: ""
-    };
-
-    componentDidMount = async () => {
+    constructor(props){
+        super(props)
+        this.state = {
+              salespersonData : [],
+              imageArray : [],
+              picture: "",
+        }
+    }
+    async componentDidMount() {
         const salesperson = await showOtherUsers(this.props.user.supervisorUid);
         this.setState({
             salespersonData: salesperson,
-        })
-    };
+        });
+        const url =await storage().ref('images/salesp@mailcupp.com').getDownloadURL()
+        .then(url => {this.setState({picture: url});}).catch(e=>{console.log(e);});
+    }
 
     render () {
     return (
         <View style={{flex:1}}>
         {
         this.state.salespersonData.map((item) => {
+            let image;
+            if (item.imageUri) {
+                image = <Image style={styles.image} source={{ uri: item.imageUri }}/>;
+            } else {
+                image = <Image style={styles.image} source={require('../assets/default-profile.jpg')}/>;
+            }
             return (
                 <View key={item.email}>
-                    {renderList(item, this.props)}
+                    <Card style={styles.mycard} onPress={() => this.props.navigation.navigate("ShowOthersAccount",item)}>
+                        <View style={styles.cardView}>
+                            {image}
+                            <View style={styles.textStyle}>
+                                <Text style={{fontSize:20}}>{item.name}</Text>
+                                <Text>{item.region}</Text>
+                            </View>
+                            </View>
+                    </Card>
                 </View>
         )})}
         </View>
     );
     }
 }
-
-    getImage = async(email) => {
-        const url= "";
-        url = await storage()
-            .ref('images/'+email)
-            .getDownloadURL()
-            .then(url => {this.setState({picture: url});})
-            .catch(e=>{console.log(e);});
-        const image = "";
-        if (url == "") {
-            image = "../assets/default-profile.jpg";
-        } else {
-            image = url;
-        }
-        return image;
-    }
-
-        const renderList = ((item, props)=>{
-            return(
-                <Card style={styles.mycard} onPress={() => props.navigation.navigate("ShowOthersAccount",item)}>
-                    <View style={styles.cardView}>
-                        <Image style={styles.image} source={require('../assets/default-profile.jpg')}/>
-                        <View style={styles.textStyle}>
-                            <Text style={{fontSize:20}}>{item.name}</Text>
-                            <Text>{item.region}</Text>
-                        </View>
-                    </View>
-                </Card>
-            );
-        })
 
 const mapStateToProps = (state) => ({
   user: state.AuthenticationReducer.user,
