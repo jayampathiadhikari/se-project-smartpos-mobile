@@ -24,7 +24,8 @@ class Login extends React.Component{
     try{
       // const user = await auth().signInWithEmailAndPassword(this.state.email,this.state.password)
       // const user = await auth().signInWithEmailAndPassword('salesp@mailcupp.com','Password123#')
-      const res = await checkAuthentication('salesp@mailcupp.com','Password123#');
+      const res = await checkAuthentication('salesp3@mailcupp.com','Password123#');
+      // const res = await checkAuthentication(this.state.email,this.state.password);
       console.log(res);
       if(res.success){
         this.props.setUser(res.user);

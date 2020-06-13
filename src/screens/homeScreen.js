@@ -22,7 +22,7 @@ class HomeScreen extends Component {
         this.getDailyTarget();
         this.getTargetAchieved();
         this.getInitialPosition();
-        // this.watchMovement();
+        this.watchMovement();
 
         // this.watchFirestore();
     };
@@ -64,7 +64,7 @@ class HomeScreen extends Component {
     };
 
     componentWillUnmount() {
-        //Geolocation.clearWatch(this.watchID);
+        // Geolocation.clearWatch(this.watchID);
         //add unscubcribe to prevent data fetch from firebsae
         // this.unsubscribe();
     };
@@ -91,8 +91,12 @@ class HomeScreen extends Component {
         this.requestLocationPermission().then(hasLocationPermission => {
             if (hasLocationPermission) {
                 Geolocation.getCurrentPosition(
-                    (position) => {
-                        console.log('CURRENT POSITION', position)
+                    async(lastPosition) => {
+                        console.log('CURRENT POSITION', lastPosition)
+                        const ts = new Date(lastPosition.timestamp);
+                        const geoPoint = new firestore.GeoPoint(lastPosition.coords.latitude, lastPosition.coords.longitude);
+                        console.log(geoPoint,'POINT UPDATED');
+                        await this.updateLocationDetails(ts, geoPoint);
                     },
                     (error) => {
                         // See error code charts below.
@@ -108,16 +112,16 @@ class HomeScreen extends Component {
 
     watchMovement() {
         //we use 10s gap for location updates
-        this.watchID = Geolocation.watchPosition((lastPosition) => {
+        Geolocation.watchPosition(async (lastPosition) => {
                 const ts = new Date(lastPosition.timestamp);
                 const geoPoint = new firestore.GeoPoint(lastPosition.coords.latitude, lastPosition.coords.longitude);
-                console.log(geoPoint);
-                this.updateLocationDetails(ts, geoPoint);
+                console.log(geoPoint,'POINT UPDATED');
+                await this.updateLocationDetails(ts, geoPoint);
             }, (err => {
                 console.log(err)
             }),
             {
-                enableHighAccuracy: true,
+                enableHighAccuracy: false,
                 distanceFilter: 100,
                 interval: 10000,
                 fastestInterval: 5000,
@@ -138,10 +142,10 @@ class HomeScreen extends Component {
                 },
             );
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                console.log('You can use the camera');
+                console.log('You can use the location');
                 return true;
             } else {
-                console.log('Camera permission denied');
+                console.log('You can use the location');
                 return false;
             }
 
