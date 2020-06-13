@@ -1,10 +1,11 @@
 import React from 'react';
-import {View, StyleSheet, ActivityIndicator, Dimensions} from 'react-native';
+import {View, StyleSheet, ActivityIndicator} from 'react-native';
 import { Input,Icon, Button, Image  } from 'react-native-elements';
 import auth from '@react-native-firebase/auth';
 import {connect} from "react-redux";
-import {setUser} from "../store/reducers/authentication/action";
-import {checkAuthentication} from "../Utils";
+import {setUser,setToken} from "../store/reducers/authentication/action";
+import {checkAuthentication,getToken} from "../Utils";
+import axios from 'axios';
 
 class Login extends React.Component{
   state = {
@@ -27,7 +28,16 @@ class Login extends React.Component{
       console.log(res);
       if(res.success){
         this.props.setUser(res.user);
-        this.props.navigation.navigate('Home')
+        const result = await getToken(res.user.uid);
+        // console.log(result,'TOKEN RESULT')
+        if(result.data.success) {
+          this.props.setToken('Bearer ' + result.data.data[0].token);
+          console.log(result, 'GET TOKEN');
+          this.props.navigation.navigate('Home')
+        }else{
+          console.log('auth error');
+
+        }
       }else{
       console.log('auth error');
     }
@@ -107,6 +117,7 @@ const mapStateToProps = (state) => ({
 
 const bindAction = (dispatch) => ({
   setUser: (user) => dispatch(setUser(user)),
+  setToken: (token) => dispatch(setToken((token)))
 });
 
 export default connect(

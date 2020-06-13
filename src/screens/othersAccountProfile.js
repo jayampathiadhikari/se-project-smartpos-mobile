@@ -4,17 +4,32 @@ import {Title, Card, Button} from 'react-native-paper';
 import * as Permissions from 'expo-permissions';
 import {LinearGradient} from 'expo-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import storage from '@react-native-firebase/storage';
 
 export default class othersAccountProfile extends React.Component {
 
-    openDial () {
-        if(Platform.OS === "android"){
-            Linking.openURL("tel:12345")
-        }else{
-            Linking.openURL("telprompt:12345")
+    constructor(props) {
+        super(props);
+        this.state = {
+            picture: ""
         }
     }
+
+    async componentDidMount() {
+        const url = await storage()
+            .ref('images/'+this.props.navigation.getParam('email'))
+            .getDownloadURL()
+            .then(url => {this.setState({picture: url});})
+            .catch(e=>{console.log(e);});
+    }
+
+    openDial () {
+            if(Platform.OS === "android"){
+                Linking.openURL('tel:'+this.props.navigation.getParam('phoneNumber'))
+            }else{
+                Linking.openURL('telprompt:'+this.props.navigation.getParam('phoneNumber'))
+            }
+        }
 
     static navigationOptions = ({navigation}) => {
             // const{ params} = navigation.state;
@@ -24,6 +39,12 @@ export default class othersAccountProfile extends React.Component {
           };
 
     render () {
+        let image;
+        if (this.props.navigation.getParam('imageUri')) {
+            image = <Image style={styles.image} source={{ uri: this.props.navigation.getParam('imageUri')}}/>;
+        } else {
+            image = <Image style={styles.image} source={require('../assets/default-profile.jpg')}/>;
+        }
         return (
             <View style={styles.root} >
                 <LinearGradient
@@ -31,13 +52,13 @@ export default class othersAccountProfile extends React.Component {
                     style={{height:"20%"}}
                 />
                 <View style={styles.imageContainer}>
-                    <Image style={styles.image} source={require('../assets/logo-pos-600.png')}/>
+                    {image}
                 </View>
                 <View style={{alignItems:"center", margin:15}}>
                     <Title>{this.props.navigation.getParam('name')}</Title>
-                    <Text style={{fontSize:18}}>{this.props.navigation.getParam('position')}</Text>
+                    <Text style={{fontSize:18}}>{this.props.navigation.getParam('region')}</Text>
                 </View>
-                <Card style={styles.myCard} onPress={()=>{Linking.openURL("mailto:someone@example.com")}} >
+                <Card style={styles.myCard} onPress={()=>{Linking.openURL('mailto:'+this.props.navigation.getParam('email'))}} >
                     <View style={styles.cardContent}>
                         <Ionicons name="ios-mail" size={32} color="#4c57ed" />
                         <Text style={styles.mytext}>{this.props.navigation.getParam('email')}</Text>
@@ -46,19 +67,20 @@ export default class othersAccountProfile extends React.Component {
                 <Card style={styles.myCard} onPress={this.openDial.bind(this)} >
                     <View style={styles.cardContent}>
                         <Ionicons name="ios-call" size={32} color="#4c57ed" />
-                        <Text style={styles.mytext}>{this.props.navigation.getParam('phone')}</Text>
+                        <Text style={styles.mytext}>{this.props.navigation.getParam('phoneNumber')}</Text>
                     </View>
                 </Card>
                 <Card style={styles.myCard}>
                     <View style={styles.cardContent}>
-                        <Ionicons name="logo-usd" size={32} color="#4c57ed" />
-                        <Text style={styles.mytext}>{this.props.navigation.getParam('salary')}</Text>
+                        <Ionicons name="ios-home" size={32} color="#4c57ed" />
+                        <Text style={styles.mytext}>{this.props.navigation.getParam('address')}</Text>
                     </View>
                 </Card>
             </View>
         );
     }
 }
+
 
 const theme = {
     colors:{

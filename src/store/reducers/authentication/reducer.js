@@ -1,10 +1,10 @@
 import { ACTION_TYPES, IAction } from '../constant';
 
 const authReducerDefaultState = {
-  authToken: 'akilaakilaakila',
   loading: false,
   signedIn: false,
-  user:null
+  user:null,
+  token:null
 };
 
 export function AuthenticationReducer(
@@ -20,12 +20,19 @@ export function AuthenticationReducer(
     case ACTION_TYPES.SET_TOKEN:
       return {
         ...state,
-        authToken: action.payload
+        token: action.payload
       };
     case ACTION_TYPES.SET_SIGNIN_STATUS:
       return {
         ...state,
         signedIn: action.payload
+      };
+    case ACTION_TYPES.SIGNOUT_USER:
+      return {
+        ...state,
+        signedIn: false,
+        user:null,
+        token: null
       };
     default:
       return state;

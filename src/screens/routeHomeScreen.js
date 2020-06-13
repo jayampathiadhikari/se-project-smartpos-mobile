@@ -6,27 +6,6 @@ import {connect} from "react-redux";
 import {setShopDetails} from "../store/reducers/ui/action";
 import {getShopsInSelectedRoute} from "../Utils";
 
-const list = [
-  {
-    shop_id: 1,
-    shop_name: 'House of Hidayath',
-  }, {
-    shop_id: 2,
-    shop_name: 'Arpico',
-  }, {
-    shop_id: 3,
-    shop_name: 'Keels',
-  }, {
-    shop_id: 4,
-    shop_name: 'Zementras',
-  }, {
-    shop_id: 5,
-    shop_name: 'Wickrama Brothers',
-  }, {
-    shop_id: 6,
-    shop_name: 'Hayleys',
-  }
-];
 
 class RouteHomeScreen extends Component {
   componentDidMount = async () => {

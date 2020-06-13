@@ -1,50 +1,70 @@
 import React, {Component} from 'react';
-import { StyleSheet, View, Image, Text, FlatList, TextInput } from 'react-native';
+import { StyleSheet, View, Image, Text, FlatList } from 'react-native';
 import { Card, FAB, Button } from 'react-native-paper';
+import {connect} from "react-redux";
+import {showOtherUsers} from "../Utils";
+import storage from '@react-native-firebase/storage';
 
-export default class othersAccountScreen extends React.Component {
+class othersAccountScreen extends React.Component {
+
+    constructor(props){
+        super(props)
+        this.state = {
+              salespersonData : [],
+              imageArray : [],
+              picture: "",
+        }
+    }
+    async componentDidMount() {
+        const salesperson = await showOtherUsers(this.props.user.supervisorUid);
+        this.setState({
+            salespersonData: salesperson,
+        });
+        const url =await storage().ref('images/salesp@mailcupp.com').getDownloadURL()
+        .then(url => {this.setState({picture: url});}).catch(e=>{console.log(e);});
+    }
 
     render () {
     return (
         <View style={{flex:1}}>
-            <FlatList
-                data={data}
-                renderItem={({item})=>{
-                    return renderList(item, this.props)
-                }}
-                keyExtractor={item=>item.id}
-            />
+        {
+        this.state.salespersonData.map((item) => {
+            let image;
+            if (item.imageUri) {
+                image = <Image style={styles.image} source={{ uri: item.imageUri }}/>;
+            } else {
+                image = <Image style={styles.image} source={require('../assets/default-profile.jpg')}/>;
+            }
+            return (
+                <View key={item.email}>
+                    <Card style={styles.mycard} onPress={() => this.props.navigation.navigate("ShowOthersAccount",item)}>
+                        <View style={styles.cardView}>
+                            {image}
+                            <View style={styles.textStyle}>
+                                <Text style={{fontSize:20}}>{item.name}</Text>
+                                <Text>{item.region}</Text>
+                            </View>
+                            </View>
+                    </Card>
+                </View>
+        )})}
         </View>
     );
     }
 }
-        const data=[
-            {id:"1",name:"Mukesh",email:"abcd@abc.com",salary:"6 lpa",phone:"12345",position:"Matara",picture:"../assets/logo-pos-600.png"},
-            {id:"2",name:"Ramesh",email:"abcd@abc.com",salary:"5 lpa",phone:"12345",position:"Galle",picture:"../assets/logo-pos-600.png"},
-            {id:"3",name:"Mahesh",email:"abcd@abc.com",salary:"5 lpa",phone:"12345",position:"Weligama",picture:"../assets/logo-pos-600.png"},
-            {id:"4",name:"Nimesh",email:"abcd@abc.com",salary:"5 lpa",phone:"12345",position:"Matara",picture:"../assets/logo-pos-600.png"},
-            {id:"5",name:"Suresh",email:"abcd@abc.com",salary:"5 lpa",phone:"12345",position:"Galle",picture:"../assets/logo-pos-600.png"},
-            {id:"6",name:"Mukesh",email:"abcd@abc.com",salary:"5 lpa",phone:"12345",position:"Matara",picture:"../assets/logo-pos-600.png"},
-            {id:"7",name:"Ramesh",email:"abcd@abc.com",salary:"5 lpa",phone:"12345",position:"Galle",picture:"../assets/logo-pos-600.png"},
-            {id:"8",name:"Mahesh",email:"abcd@abc.com",salary:"5 lpa",phone:"12345",position:"Weligama",picture:"../assets/logo-pos-600.png"},
-            {id:"9",name:"Nimesh",email:"abcd@abc.com",salary:"5 lpa",phone:"12345",position:"Matara",picture:"../assets/logo-pos-600.png"},
-            {id:"10",name:"Suresh",email:"abcd@abc.com",salary:"5 lpa",phone:"12345",position:"Galle",picture:"../assets/logo-pos-600.png"}
-        ]
-        const renderList = ((item, props)=>{
-            return(
-                <Card style={styles.mycard} onPress={() => props.navigation.navigate("ShowOthersAccount",item)}>
-                    <View style={styles.cardView}>
-                        <Image style={styles.image} source={require('../assets/logo-pos-600.png')}/>
-                        <View style={styles.textStyle}>
-                            <Text style={{fontSize:20}}>{item.name}</Text>
-                            <Text>{item.position}</Text>
-                        </View>
-                    </View>
-                </Card>
-            );
-        })
 
+const mapStateToProps = (state) => ({
+  user: state.AuthenticationReducer.user,
+});
 
+const bindAction = (dispatch) => ({
+
+});
+
+export default connect(
+  mapStateToProps,
+  bindAction
+)(othersAccountScreen);
 
 const styles = StyleSheet.create({
     mycard: {

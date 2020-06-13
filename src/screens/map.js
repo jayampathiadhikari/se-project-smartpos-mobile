@@ -8,11 +8,12 @@
  */
 
 import React from 'react';
-import {View, StyleSheet, Dimensions} from 'react-native';
+import {View, StyleSheet, Dimensions,Text} from 'react-native';
 import MapboxGL from "@react-native-mapbox-gl/maps";
 import {connect} from "react-redux";
-import {createGeojson} from "../Utils";
-
+import {createGeojson, getOptimizedRouteByWaypoints, getRouteByWaypoints, getWaypointsArray} from "../Utils";
+import Bubble from '../components/bubble';
+import Geolocation from "react-native-geolocation-service";
 export const ACCESS_KEY = `pk.eyJ1IjoiamF5YW1wYXRoaSIsImEiOiJjazd3NTFhbngwMG44M2xucTU4bzl4azF4In0.DQhkwC9bVwzcVYhaZf1aVw`;
 
 MapboxGL.setAccessToken(ACCESS_KEY);
@@ -36,6 +37,13 @@ const shopstyles = {
     textHaloColor: '#fff',
     textHaloWidth:2
   },
+  line:{
+    lineJoin: 'round',
+    lineCap: 'round',
+    lineColor: '#3887be',
+    lineWidth: 3,
+    lineOpacity: 0.75
+  }
 };
 
 const featureCollection = {
@@ -60,28 +68,29 @@ const featureCollection = {
 class ShowMap extends React.Component {
 
   state = {
-    shopGeoJSON: null
+    shopGeoJSON: null,
+    wayPoints:null,
+    directions:null
   };
 
   componentDidMount() {
     MapboxGL.setTelemetryEnabled(false);
-
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.shops != this.props.shops) {
-      console.log(this.props.shops, 'MAP SHOPS PROPS UPDATED')
+      console.log(this.props.shops, 'MAP SHOPS PROPS UPDATED');
       const geoJSON = createGeojson(this.props.shops);
-      this.setState({
-        shopGeoJSON: geoJSON
-      });
       console.log(geoJSON);
+      const wayPoints = getWaypointsArray(this.props.shops);
+      this.setState({
+        shopGeoJSON: geoJSON,
+        wayPoints: wayPoints,
+
+      });
     }
   }
 
-  // onLocationUpdate = (location) => {
-  //   console.log('LOCATION MAPBOX')
-  // };
   renderShops = () => {
     console.log('RENDERSHOPS', this.state.shopGeoJSON);
     return(
@@ -89,18 +98,50 @@ class ShowMap extends React.Component {
         <MapboxGL.SymbolLayer id="shopsLayer" style={shopstyles.icon}/>
       </MapboxGL.ShapeSource>
     )
-  }
+  };
+
+  getRoute = async() => {
+    var wayPoints = [];
+    Geolocation.getCurrentPosition(
+      async (position) => {
+        wayPoints = [[position.coords.longitude,position.coords.latitude],...this.state.wayPoints];
+        console.log('CURRENT POSITION MAPBOX',position, wayPoints)
+        const res = await getRouteByWaypoints(wayPoints);
+        var route = res.data.routes[0].geometry.coordinates;
+        var geojson = {
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'LineString',
+            coordinates: route
+          }
+        };
+        this.setState({
+          directions: geojson
+        });
+        console.log(geojson);
+      },
+      (error) => {
+        // See error code charts below.
+        console.log(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
+    )
+  };
+
+  renderRoute = () => {
+    return(
+      <MapboxGL.ShapeSource id={'routesGeoJSONLayer'} shape={this.state.directions}>
+        <MapboxGL.LineLayer id="routeLayer" style={shopstyles.line} belowLayerID={'shopsLayer'}/>
+      </MapboxGL.ShapeSource>
+    )
+  };
+
   render() {
     return (
       <View style={styles.page}>
         <View style={styles.container}>
           <MapboxGL.MapView style={styles.map}>
-
-            <MapboxGL.ShapeSource
-              id="exampleShapeSource"
-              shape={featureCollection}>
-              <MapboxGL.SymbolLayer id="exampleIconName" style={shopstyles.icon} />
-            </MapboxGL.ShapeSource>
 
             <MapboxGL.UserLocation
               visible={true}
@@ -117,7 +158,15 @@ class ShowMap extends React.Component {
             />
             {this.state.shopGeoJSON != null ? this.renderShops()
               : null}
+            {
+              this.state.directions != null ? this.renderRoute() : null
+            }
           </MapboxGL.MapView>
+          <Bubble onPress={this.getRoute} style={{bottom: 30}}>
+            <Text>
+              Show Route
+            </Text>
+          </Bubble>
         </View>
       </View>
     )

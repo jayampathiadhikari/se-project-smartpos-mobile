@@ -7,7 +7,8 @@ export const ACTION_TYPES = {
   SET_SIGNIN_STATUS : 'SET_SIGNIN_STATUS',
   SET_PHONE_NO : 'SET_PHONE_NO',
   SET_USER : 'SET_USER',
-  SET_SHOPS : 'SET_SHOPS'
+  SET_SHOPS : 'SET_SHOPS',
+  SIGNOUT_USER : 'SIGNOUT_USER'
 };
 
 export interface IAction {

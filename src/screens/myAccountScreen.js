@@ -1,17 +1,34 @@
 import React, {Component} from 'react';
-import { StyleSheet, View, Image, Text, Linking, Platform } from 'react-native';
+import { StyleSheet, View, Image, Text, Linking, Platform, ScrollView, SafeAreaView, FlatList } from 'react-native';
 import {Title, Card, Button} from 'react-native-paper';
 import * as Permissions from 'expo-permissions';
 import {LinearGradient} from 'expo-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {connect} from "react-redux";
+import storage from '@react-native-firebase/storage';
 
-export default class myAccountScreen extends React.Component {
+class myAccountScreen extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            picture: ""
+        }
+    }
+
+    async componentDidMount() {
+        const url = await storage()
+            .ref('images/'+this.props.user.email)
+            .getDownloadURL()
+            .then(url => {this.setState({picture: url});})
+            .catch(e=>{console.log(e);});
+    }
 
     openDial () {
         if(Platform.OS === "android"){
-            Linking.openURL("tel:12345")
+            Linking.openURL('tel:'+this.props.user.phoneNumber)
         }else{
-            Linking.openURL("telprompt:12345")
+            Linking.openURL('telprompt:'+this.props.user.phoneNumber)
         }
     }
 
@@ -23,49 +40,66 @@ export default class myAccountScreen extends React.Component {
       };
 
     render () {
+        let image;
+        if (this.props.user.imageUri) {
+            image = <Image style={styles.image} source={{ uri: this.props.user.imageUri }}/>;
+        } else {
+            image = <Image style={styles.image} source={require('../assets/default-profile.jpg')}/>;
+        }
         return (
-            <View style={styles.root} >
-                <LinearGradient
-                    colors={["#0033ff","#6bc1ff"]}
-                    style={{height:"20%"}}
-                />
-                <View style={styles.imageContainer}>
-                    <Image style={styles.image} source={ require('../assets/logo-pos-600.png')  }/>
-                </View>
-                <View style={{alignItems:"center", margin:15}}>
-                    <Title>Shashini</Title>
-                    <Text style={{fontSize:18}}>Matara</Text>
-                </View>
-                <Card style={styles.myCard} onPress={()=>{Linking.openURL("mailto:someone@example.com")}} >
-                    <View style={styles.cardContent}>
-                        <Ionicons name="ios-mail" size={32} color="#4c57ed" />
-                        <Text style={styles.mytext}>shashini@gmail.com</Text>
+            <SafeAreaView style={styles.root}>
+                <ScrollView>
+                    <View style={styles.imageContainer}>
+                        {image}
                     </View>
-                </Card>
-                <Card style={styles.myCard} onPress={this.openDial.bind(this)} >
-                    <View style={styles.cardContent}>
-                        <Ionicons name="ios-call" size={32} color="#4c57ed" />
-                        <Text style={styles.mytext}>0123456789</Text>
+                    <View style={{alignItems:"center"}}>
+                        <Title>{this.props.user.firstName} {this.props.user.lastName}</Title>
+                        <Text style={{fontSize:18}}>{this.props.user.region}</Text>
                     </View>
-                </Card>
-                <Card style={styles.myCard}>
-                    <View style={styles.cardContent}>
-                        <Ionicons name="logo-usd" size={32} color="#4c57ed" />
-                        <Text style={styles.mytext}>100</Text>
+                    <Card style={styles.myCard} onPress={()=>{Linking.openURL('mailto:'+this.props.user.email)}} >
+                        <View style={styles.cardContent}>
+                            <Ionicons name="ios-mail" size={32} color="#4c57ed" />
+                            <Text style={styles.mytext}>{this.props.user.email}</Text>
+                        </View>
+                    </Card>
+                    <Card style={styles.myCard} onPress={this.openDial.bind(this)} >
+                        <View style={styles.cardContent}>
+                            <Ionicons name="ios-call" size={32} color="#4c57ed" />
+                            <Text style={styles.mytext}>{this.props.user.phoneNumber}</Text>
+                        </View>
+                    </Card>
+                    <Card style={styles.myCard}>
+                        <View style={styles.cardContent}>
+                            <Ionicons name="ios-home" size={32} color="#4c57ed" />
+                            <Text style={styles.mytext}>{this.props.user.address}</Text>
+                        </View>
+                    </Card>
+                    <View style={{flexDirection:"row", justifyContent:"space-around", padding:10}}>
+                        <Button icon="account-edit" mode="contained" theme={theme} onPress={() => this.props.navigation.navigate("EditAccount")}>
+                            Edit Profile
+                        </Button>
+                        <Button icon="logout" mode="contained" theme={theme} onPress={() => console.log("Pressed")}>
+                            Logout
+                        </Button>
                     </View>
-                </Card>
-                <View style={{flexDirection:"row", justifyContent:"space-around", padding:10}}>
-                    <Button icon="account-edit" mode="contained" theme={theme} onPress={() => this.props.navigation.navigate("EditAccount")}>
-                        Edit
-                    </Button>
-                    <Button icon="delete" mode="contained" theme={theme} onPress={()=>console.log("press")}>
-                        Delete Profile
-                    </Button>
-                </View>
-            </View>
+                </ScrollView>
+            </SafeAreaView>
         );
     }
 }
+
+const mapStateToProps = (state) => ({
+  user: state.AuthenticationReducer.user,
+});
+
+const bindAction = (dispatch) => ({
+    setUser: (user) => dispatch(setUser(user)),
+});
+
+export default connect(
+  mapStateToProps,
+  bindAction
+)(myAccountScreen);
 
 const theme = {
     colors:{
@@ -75,13 +109,13 @@ const theme = {
 
 const styles = StyleSheet.create({
     root:{
-        flex:1
+        flex:1,
+        backgroundColor: '#e4e5f7'
     },
     image:{
         width:140,
         height:140,
-        borderRadius:70,
-        marginTop:-50
+        borderRadius:70
     },
     imageContainer:{
         alignItems:"center"
