@@ -1,6 +1,5 @@
 import axios from 'axios';
 import auth from '@react-native-firebase/auth';
-import {Alert} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {MAPBOX_TOKEN} from "./constants/constants";
 import storage from '@react-native-firebase/storage';
@@ -76,6 +75,14 @@ export const checkAuthentication = (email, password) => {
       return {success: false, message: errorMessage}
     });
 };
+
+export const getUser = async(email)=>{
+  const userQueryRef = firestore().collection('users').where('email', '==', email);
+  const userQuerySnapshot = await userQueryRef.get();
+  const type = userQuerySnapshot.docs[0].data().type;
+  console.log(userQuerySnapshot.docs[0].data(), 'USER DATA AFRA');
+  return { user: userQuerySnapshot.docs[0].data()}
+}
 
 export const createGeojson = (shopData) => {
   var data = {
@@ -181,11 +188,8 @@ export const updateUser = async (key, firstName, lastName, address, phoneNumber,
     updateDBRefUpdate.update("address" , address)
     updateDBRefUpdate.update("phoneNumber" , phoneNumber)
     updateDBRefUpdate.update("imageUri" , imageUri)
-    .then((docRef) => {
-        console.log("Document successfully written!");
-        Alert.alert('Successfully Updated!');
-    })
-    .catch((error) => {
-      console.error("Error: ", error);
-    });
+
+    // .catch((error) => {
+    //   console.error("Error: ", error);
+    // });
 };

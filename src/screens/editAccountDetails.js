@@ -1,13 +1,15 @@
-import React, {Component, useState} from 'react';
-import { StyleSheet, View, Text, Modal, Alert, KeyboardAvoidingView } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, Modal, Alert, KeyboardAvoidingView } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import {connect} from 'react-redux';
-import {updateUser} from "../Utils";
+import {updateUser,getUser} from "../Utils";
 import storage from '@react-native-firebase/storage';
+import {setUser} from "../store/reducers/authentication/action";
 
 class editAccountDetails extends React.Component {
+    _isMounted=false
 
     constructor(props) {
       super(props);
@@ -23,7 +25,15 @@ class editAccountDetails extends React.Component {
       }
     }
 
-        pickFromGallery = async (imgName) => {
+    componentDidMount() {
+        this._isMounted=true;
+    }
+
+    componentWillUnmount() {
+        this._isMounted=false;
+    }
+
+    pickFromGallery = async (imgName) => {
             const {granted} = await Permissions.askAsync(Permissions.CAMERA_ROLL)
             if (granted){
                 let data = await ImagePicker.launchImageLibraryAsync({
@@ -117,9 +127,33 @@ class editAccountDetails extends React.Component {
         }
         saveEdits(saveUid, saveFirstName, saveLastName, saveAddress, savePhoneNumber, saveImageUri){
             updateUser(saveUid, saveFirstName, saveLastName, saveAddress, savePhoneNumber, saveImageUri)
-            .then(() => {
-                    this.props.navigation.navigate("AccountHome");
-            })
+            .then(async () => {
+                    this.updateStore()
+                    .then(()=>{
+                        this.props.navigation.navigate("AccountHome");
+                        if(this._isMounted){
+                            console.log("Document successfully written!");
+                            Alert.alert('Successfully Updated!');
+                        }}
+                    ).catch(()=>{
+                        if (this._isMounted){
+                            Alert.alert('Error occured.Try Again !')}
+                        }
+
+                    )
+
+
+            }).catch(err=>{
+                if(this._isMounted){
+                    console.log(error);
+                    Alert.alert('Error occured.Try Again!')
+                }})
+        }
+
+        updateStore=async()=>{
+            const userData=await getUser(this.props.user.email);
+            this.props.setUser(userData.user);
+
         }
 
     render(){
@@ -226,7 +260,7 @@ const mapStateToProps = (state) => ({
 });
 
 const bindAction = (dispatch) => ({
-
+    setUser : (user)=>{dispatch(setUser(user))}
 });
 
 export default connect(

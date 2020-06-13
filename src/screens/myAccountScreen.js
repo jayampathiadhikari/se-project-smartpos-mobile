@@ -1,13 +1,13 @@
-import React, {Component} from 'react';
-import { StyleSheet, View, Image, Text, Linking, Platform, ScrollView, SafeAreaView, FlatList } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, Image, Text, Linking, Platform, ScrollView, SafeAreaView } from 'react-native';
 import {Title, Card, Button} from 'react-native-paper';
-import * as Permissions from 'expo-permissions';
-import {LinearGradient} from 'expo-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {connect} from "react-redux";
 import storage from '@react-native-firebase/storage';
+import {setUser,signOut} from "../store/reducers/authentication/action";
 
 class myAccountScreen extends React.Component {
+    _isMounted = false;
 
     constructor(props) {
         super(props);
@@ -17,10 +17,16 @@ class myAccountScreen extends React.Component {
     }
 
     async componentDidMount() {
+        this._isMounted=true;
         const url = await storage()
             .ref('images/'+this.props.user.email)
             .getDownloadURL()
-            .then(url => {this.setState({picture: url});})
+            .then(
+                (url) => {
+                if(this._isMounted){
+                    this.setState({picture: url})}
+
+            })
             .catch(e=>{console.log(e);});
     }
 
@@ -38,6 +44,12 @@ class myAccountScreen extends React.Component {
           title: 'My Account',
         };
       };
+
+    logout=async()=>{
+        this.props.navigation.navigate('Login');
+        await this.props.signOutUser();
+
+    }
 
     render () {
         let image;
@@ -78,7 +90,7 @@ class myAccountScreen extends React.Component {
                         <Button icon="account-edit" mode="contained" theme={theme} onPress={() => this.props.navigation.navigate("EditAccount")}>
                             Edit Profile
                         </Button>
-                        <Button icon="logout" mode="contained" theme={theme} onPress={() => console.log("Pressed")}>
+                        <Button icon="logout" mode="contained" theme={theme} onPress={() => this.logout()}>
                             Logout
                         </Button>
                     </View>
@@ -94,6 +106,7 @@ const mapStateToProps = (state) => ({
 
 const bindAction = (dispatch) => ({
     setUser: (user) => dispatch(setUser(user)),
+    signOutUser : ()=>dispatch(signOut())
 });
 
 export default connect(
