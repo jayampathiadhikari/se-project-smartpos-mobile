@@ -20,6 +20,7 @@ describe('Current stock screen',()=>{
         // );
         user = {uid:'Rp7TWT0svQOe2MWAqr29CisH7QU2'};
         wrapper =shallow(<StockScreen user={user}/>,{ disableLifecycleMethods: true });
+        wrapper.instance()._isMounted=true;
     },5);
 
     afterEach(() => {

@@ -27,6 +27,13 @@ export function AuthenticationReducer(
         ...state,
         signedIn: action.payload
       };
+    case ACTION_TYPES.SIGNOUT_USER:
+      return {
+        ...state,
+        signedIn: false,
+        user:null,
+        token: null
+      };
     default:
       return state;
   }

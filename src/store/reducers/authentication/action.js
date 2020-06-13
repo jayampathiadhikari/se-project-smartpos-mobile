@@ -10,3 +10,6 @@ export function setUser(payload) {
 export function setToken(token) {
   return {type: ACTION_TYPES.SET_TOKEN, payload: token}
 }
+export function signOut(){
+  return{type: ACTION_TYPES.SIGNOUT_USER}
+}

@@ -21,7 +21,7 @@ class Screen extends React.Component {
     //this.getLocationDetails(today);
   };
 
-  componentWillUnmount(): void {
+  componentWillUnmount() {
     //Geolocation.clearWatch(this.watchID);
     //add unscubcribe to prevent data fetch from firebsae
     this.unsubscribe();

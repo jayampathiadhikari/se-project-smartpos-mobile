@@ -5,13 +5,14 @@ import LinearGradient from 'react-native-linear-gradient';
 const axios = require('axios');
 
 export default class cashDrawersScreen extends React.Component {
-
+    _isMounted=false;
     state ={
         dueAmount : 0
     };
 
 
     componentDidMount(){
+        this._isMounted=true;
         this.getInvoiceDetails();
         this.interval = setInterval(this.getInvoiceDetails, 10000);
     };
@@ -20,7 +21,7 @@ export default class cashDrawersScreen extends React.Component {
              axios.post("https://se-smartpos-backend.herokuapp.com/api/v1/invoice/viewallinvoices",
              {shop_id:this.props.navigation.getParam('shop_id')})
             .then( (response)=> {
-                if (response.data.success){
+                if (response.data.success && this._isMounted){
                    let amount=0
                    response.data.data.map((invoice)=>{
                         amount+=invoice.invoice_value-invoice.paid_amount;
@@ -36,6 +37,7 @@ export default class cashDrawersScreen extends React.Component {
 
     componentWillUnmount() {
            clearInterval(this.intervalID);
+           this._isMounted=false;
        }
 
   render() {

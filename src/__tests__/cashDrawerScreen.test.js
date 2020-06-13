@@ -12,9 +12,11 @@ describe('Cash Drawer screen',()=> {
 
     beforeEach(() => {
         wrapper = shallow(<CashDrawerScreen navigation={{getParam: jest.fn()}}/>, {disableLifecycleMethods: true});
+        wrapper.instance()._isMounted=true;
     }, 5);
 
     afterEach(() => {
+        wrapper.instance()._isMounted=false;
         wrapper.unmount();
     }, 5);
 
