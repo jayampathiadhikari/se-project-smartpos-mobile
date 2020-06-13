@@ -1,10 +1,11 @@
 import React, {Component, useState} from 'react';
-import { StyleSheet, View, Text, Modal, Alert} from 'react-native';
+import { StyleSheet, View, Text, Modal, Alert, KeyboardAvoidingView } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import {connect} from 'react-redux';
 import {updateUser} from "../Utils";
+import storage from '@react-native-firebase/storage';
 
 class editAccountDetails extends React.Component {
 
@@ -15,12 +16,14 @@ class editAccountDetails extends React.Component {
         lastName: this.props.user.lastName,
         address: this.props.user.address,
         phoneNumber: this.props.user.phoneNumber,
+        imageUri: this.props.user.imageUri,
         picture: "",
-        modal: false
+        modal: false,
+        enableShift: false
       }
     }
 
-        pickFromGallery = async () => {
+        pickFromGallery = async (imgName) => {
             const {granted} = await Permissions.askAsync(Permissions.CAMERA_ROLL)
             if (granted){
                 let data = await ImagePicker.launchImageLibraryAsync({
@@ -29,20 +32,25 @@ class editAccountDetails extends React.Component {
                     aspect:[1,1],
                     quality:0.5
                 })
-                if(!data.cancelled){
-                    let newfile={
-                        uri:data.uri,
-                        type:`test/${data.uri.split(".")[1]}`,
-                        name:`test.${data.uri.split(".")[1]}`
-                    }
-                    this.handleUpload(newfile)
+                if (!data.cancelled){
+                    this.uploadImage(data.uri, imgName)
+                        .then( data => {
+                            console.log(data)
+                            this.setPicture(data.url)
+                            this.setImageUri(imgName)
+                            this.setModalFalse()
+                            Alert.alert("Successfully upload your image! Now Press SAVE");
+                        })
+                        .catch((error) => {
+                            Alert.alert(error);
+                        });
                 }
             }else{
                 Alert.alert("You need to give permission to access the Gallery")
             }
         }
 
-        pickFromCamera = async () => {
+        pickFromCamera = async (imgName) => {
             const {granted} = await Permissions.askAsync(Permissions.CAMERA)
             if (granted){
                 let data = await ImagePicker.launchCameraAsync({
@@ -51,34 +59,29 @@ class editAccountDetails extends React.Component {
                     aspect:[1,1],
                     quality:0.5
                 })
-                if(!data.cancelled){
-                    let newfile={
-                        uri:data.uri,
-                        type:`test/${data.uri.split(".")[1]}`,
-                        name:`test.${data.uri.split(".")[1]}`
-                    }
-                    this.handleUpload(newfile)
+                if (!data.cancelled){
+                    this.uploadImage(data.uri, imgName)
+                        .then( data => {
+                            console.log(data)
+                            this.setPicture(data.url)
+                            this.setImageUri(imgName)
+                            this.setModalFalse()
+                            Alert.alert("Successfully upload your image! Now Press SAVE");
+                        })
+                        .catch((error) => {
+                            Alert.alert(error);
+                        });
                 }
             }else{
                 Alert.alert("You need to give permission to access the Camera")
             }
         }
 
-        handleUpload = (image)=>{
-            const data = new FormData()
-            data.append('file',image)
-            data.append('upload_preset','employeeApp')
-            data.append("cloud_name","cloudshashini")
-
-            fetch("https://api.cloudinary.com/v1_1/cloudshashini/image/upload",{
-                method:"post",
-                body:data
-            }).then(res=>res.json()).
-            then(data=>{
-                console.log(data)
-                this.setPicture(data.url)
-                this.setModalFalse()
-            })
+        uploadImage = async (uri, imageName) => {
+            const response = await fetch(uri);
+            const blob = await response.blob();
+            var ref = storage().ref().child("images/" + imageName);
+            return ref.put(blob);
         }
 
         setFirstName=(text)=>{
@@ -96,22 +99,40 @@ class editAccountDetails extends React.Component {
         setPicture=(text)=>{
             this.setState({picture:text});
         }
+        setImageUri= async (imageName) =>{
+            const url = await storage().ref('images/'+imageName).getDownloadURL()
+                        .then(url => {this.setState({imageUri: url});}).catch(e=>{console.log(e);});
+        }
         setModalTrue=()=>{
             this.setState({modal:true});
         }
         setModalFalse=()=>{
             this.setState({modal:false});
         }
+        setEnableShiftTrue=()=>{
+            this.setState({enableShift:true});
+        }
+        setEnableShiftFalse=()=>{
+            this.setState({enableShift:false});
+        }
+        saveEdits(saveUid, saveFirstName, saveLastName, saveAddress, savePhoneNumber, saveImageUri){
+            updateUser(saveUid, saveFirstName, saveLastName, saveAddress, savePhoneNumber, saveImageUri)
+            .then(() => {
+                    this.props.navigation.navigate("AccountHome");
+            })
+        }
 
     render(){
         return (
-            <View style={styles.root}>
+            <KeyboardAvoidingView behavior="position" style={styles.root} enabled={this.state.enableShift} >
+            <View>
                 <TextInput
                     label='First Name'
                     style={styles.inputStyle}
                     value={this.state.firstName}
                     placeholder={this.props.user.firstName}
                     theme={theme}
+                    onFocus={()=>this.setEnableShiftFalse()}
                     mode="outlined"
                     onChangeText ={(text)=>{this.setFirstName(text)}}
                 />
@@ -121,6 +142,7 @@ class editAccountDetails extends React.Component {
                     value={this.state.lastName}
                     placeholder={this.props.user.lastName}
                     theme={theme}
+                    onFocus={()=>this.setEnableShiftFalse()}
                     mode="outlined"
                     onChangeText={(text)=>{this.setLastName(text)}}
                 />
@@ -130,6 +152,7 @@ class editAccountDetails extends React.Component {
                     value={this.state.address}
                     placeholder={this.props.user.address}
                     theme={theme}
+                    onFocus={()=>this.setEnableShiftTrue()}
                     mode="outlined"
                     onChangeText={(text)=>{this.setAddress(text)}}
                 />
@@ -139,6 +162,7 @@ class editAccountDetails extends React.Component {
                     value={this.state.phoneNumber}
                     placeholder={this.props.user.phoneNumber}
                     theme={theme}
+                    onFocus={()=>this.setEnableShiftTrue()}
                     keyboardType= "number-pad"
                     mode="outlined"
                     onChangeText={(text)=>{this.setPhone(text)}}
@@ -146,16 +170,16 @@ class editAccountDetails extends React.Component {
                 <Button style={styles.inputStyle} icon={this.state.picture==""?"upload":"check"} mode="contained" theme={theme} onPress={() => this.setModalTrue()}>
                     Upload Image
                 </Button>
-                <Button style={styles.inputStyle} icon="content-save" mode="contained" theme={theme} onPress={() =>updateUser (this.props.user.uid, this.state.firstName, this.state.lastName, this.state.address, this.state.phoneNumber)}>
+                <Button style={styles.inputStyle} icon="content-save" mode="contained" theme={theme} onPress={() =>this.saveEdits (this.props.user.uid, this.state.firstName, this.state.lastName, this.state.address, this.state.phoneNumber, this.state.imageUri)}>
                     Save
                 </Button>
                 <Modal animationType="slide" transparent={true} visible={this.state.modal} onRequestClose={() => this.setModalFalse()}>
                     <View style={styles.modalView}>
                         <View style={styles.modalButtonView}>
-                            <Button icon="camera" theme={theme} mode="contained" onPress={() => this.pickFromCamera()}>
+                            <Button icon="camera" theme={theme} mode="contained" onPress={() => this.pickFromCamera(this.props.user.email)}>
                                 Camera
                             </Button>
-                            <Button icon="image-area" theme={theme} mode="contained" onPress={() => this.pickFromGallery()}>
+                            <Button icon="image-area" theme={theme} mode="contained" onPress={() => this.pickFromGallery(this.props.user.email)}>
                                 Gallery
                             </Button>
                         </View>
@@ -165,6 +189,7 @@ class editAccountDetails extends React.Component {
                     </View>
                 </Modal>
             </View>
+            </KeyboardAvoidingView>
         );
     }
 }

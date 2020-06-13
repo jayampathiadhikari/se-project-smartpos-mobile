@@ -4,9 +4,24 @@ import {Title, Card, Button} from 'react-native-paper';
 import * as Permissions from 'expo-permissions';
 import {LinearGradient} from 'expo-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import storage from '@react-native-firebase/storage';
 
 export default class othersAccountProfile extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            picture: ""
+        }
+    }
+
+    async componentDidMount() {
+        const url = await storage()
+            .ref('images/'+this.props.navigation.getParam('email'))
+            .getDownloadURL()
+            .then(url => {this.setState({picture: url});})
+            .catch(e=>{console.log(e);});
+    }
 
     openDial () {
             if(Platform.OS === "android"){
@@ -24,6 +39,12 @@ export default class othersAccountProfile extends React.Component {
           };
 
     render () {
+        let image;
+        if (this.props.navigation.getParam('imageUri')) {
+            image = <Image style={styles.image} source={{ uri: this.props.navigation.getParam('imageUri')}}/>;
+        } else {
+            image = <Image style={styles.image} source={require('../assets/default-profile.jpg')}/>;
+        }
         return (
             <View style={styles.root} >
                 <LinearGradient
@@ -31,7 +52,7 @@ export default class othersAccountProfile extends React.Component {
                     style={{height:"20%"}}
                 />
                 <View style={styles.imageContainer}>
-                    <Image style={styles.image} source={require('../assets/default-profile.jpg')}/>
+                    {image}
                 </View>
                 <View style={{alignItems:"center", margin:15}}>
                     <Title>{this.props.navigation.getParam('name')}</Title>

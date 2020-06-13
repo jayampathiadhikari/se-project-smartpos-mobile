@@ -3,6 +3,7 @@ import auth from '@react-native-firebase/auth';
 import {Alert} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {MAPBOX_TOKEN} from "./constants/constants";
+import storage from '@react-native-firebase/storage';
 
 
 export const getToken = async(employee_id) => {
@@ -165,12 +166,12 @@ export const showOtherUsers = async (agentID) => {
   querySnap.docs.forEach(doc => {
     const data = doc.data();
     salesperson.push({name: data.firstName +" "+ data.lastName, region: data.region, email: data.email,
-    phoneNumber: data.phoneNumber, address: data.address})
+    phoneNumber: data.phoneNumber, address: data.address, imageUri: data.imageUri })
   });
   return salesperson;
 };
 
-export const updateUser = async (key, firstName, lastName, address, phoneNumber) => {
+export const updateUser = async (key, firstName, lastName, address, phoneNumber, imageUri) => {
     const updateDBRef = firestore().collection("users").where("uid", "==", key);
     const updateDBRefSnap = await updateDBRef.get();
     const id = updateDBRefSnap.docs[0].id;
@@ -179,6 +180,7 @@ export const updateUser = async (key, firstName, lastName, address, phoneNumber)
     updateDBRefUpdate.update("lastName" , lastName)
     updateDBRefUpdate.update("address" , address)
     updateDBRefUpdate.update("phoneNumber" , phoneNumber)
+    updateDBRefUpdate.update("imageUri" , imageUri)
     .then((docRef) => {
         console.log("Document successfully written!");
         Alert.alert('Successfully Updated!');
