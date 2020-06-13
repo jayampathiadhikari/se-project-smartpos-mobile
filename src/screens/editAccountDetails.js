@@ -85,16 +85,37 @@ class editAccountDetails extends React.Component {
         }
 
         setFirstName=(text)=>{
-            this.setState({firstName:text});
+            if (text == ""){
+                Alert.alert("First Name should not be empty.");
+            }
+            if(text.match(/^[a-zA-Z]*$/)){
+                this.setState({firstName:text});
+            } else {
+                Alert.alert("First Name should only contain alphabetic letters.");
+            }
         }
         setLastName=(text)=>{
-            this.setState({lastName:text});
+            if (text == ""){
+                Alert.alert("Last Name should not be empty.");
+            }
+            if(text.match(/^[a-zA-Z]*$/)){
+                this.setState({lastName:text});
+            } else {
+                Alert.alert("Last Name should only contain alphabetic letters.");
+            }
         }
         setAddress=(text)=>{
             this.setState({address:text});
         }
         setPhone=(text)=>{
-            this.setState({phoneNumber:text});
+            if (text == ""){
+                Alert.alert("Phone number should not be empty.");
+            }
+            if(text.match(/^[0-9]*$/)){
+                this.setState({phoneNumber:text});
+            } else {
+                Alert.alert("Phone number should only contain numbers.");
+            }
         }
         setPicture=(text)=>{
             this.setState({picture:text});
@@ -116,10 +137,14 @@ class editAccountDetails extends React.Component {
             this.setState({enableShift:false});
         }
         saveEdits(saveUid, saveFirstName, saveLastName, saveAddress, savePhoneNumber, saveImageUri){
-            updateUser(saveUid, saveFirstName, saveLastName, saveAddress, savePhoneNumber, saveImageUri)
-            .then(() => {
-                    this.props.navigation.navigate("AccountHome");
-            })
+            if (saveFirstName == "" || saveLastName == "" || saveAddress == "" || savePhoneNumber == ""){
+                Alert.alert("Please fill all the fields.");
+            }else{
+                updateUser(saveUid, saveFirstName, saveLastName, saveAddress, savePhoneNumber, saveImageUri)
+                .then(() => {
+                        this.props.navigation.navigate("AccountHome");
+                })
+            }
         }
 
     render(){
