@@ -21,7 +21,7 @@ export default class cashDrawersScreen extends React.Component {
              axios.post("https://se-smartpos-backend.herokuapp.com/api/v1/invoice/viewallinvoices",
              {shop_id:this.props.navigation.getParam('shop_id')})
             .then( (response)=> {
-                if (response.data.success && this._isMounted===true){
+                if (response.data.success && this._isMounted){
                    let amount=0
                    response.data.data.map((invoice)=>{
                         amount+=invoice.invoice_value-invoice.paid_amount;
