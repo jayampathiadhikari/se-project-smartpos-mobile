@@ -7,6 +7,8 @@ const axios = require('axios');
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default class SalesDetails extends Component {
+    _isMounted = false;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -22,8 +24,15 @@ export default class SalesDetails extends Component {
     }
 
     componentDidMount() {
-        this.getInvoiceDetails();
+        this._isMounted = true;
+        if (this._isMounted) {
+            this.getInvoiceDetails();
+        }
 
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     getInvoiceDetails = () => {
@@ -248,6 +257,7 @@ export default class SalesDetails extends Component {
                                 onChangeText={(amount) => {
                                     this.setDueAmount(amount, state.invoiceToUpdate.due)
                                 }}
+                                keyboardType={'numeric'}
                             />
 
                             <Button title='Update' buttonStyle={{...modalstyles.openButton, backgroundColor: "#af0810"}}

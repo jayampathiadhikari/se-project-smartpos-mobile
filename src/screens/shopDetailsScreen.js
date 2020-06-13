@@ -6,20 +6,24 @@ const axios = require('axios');
 
 
 export default class ShopDetailsScreen extends React.Component {
-
+    _isMounted = false;
     state = {
         shopDetails: {}
     }
 
     componentDidMount() {
+        this._isMounted = true;
         this.getShopDetails();
     };
 
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
     getShopDetails = () => {
         axios.post("https://se-smartpos-backend.herokuapp.com/api/v1/shop/viewshopdetails",
             {shop_id: this.props.navigation.getParam('shop_id')})
             .then((response) => {
-                if (response.data.success) {
+                if (response.data.success && this._isMounted) {
                     this.setState({shopDetails: response.data.data});
                 }
             })
