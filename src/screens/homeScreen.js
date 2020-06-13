@@ -47,7 +47,7 @@ class HomeScreen extends Component {
     };
 
     getTargetAchieved() {
-        axios.get("https://se-smartpos-backend.herokuapp.com/api/v1/salesperson/gettargetachieved")
+        axios.post("https://se-smartpos-backend.herokuapp.com/api/v1/salesperson/gettargetachieved",{salesperson_id: this.props.user.uid})
             .then((response) => {
                 if (response.data.success){
                     const targetAchieved = response.data.data.target_achieved;
