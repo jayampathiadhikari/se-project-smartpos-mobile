@@ -14,7 +14,6 @@ import routeHomeScreen from '../screens/routeHomeScreen.js';
 import homeScreen from '../screens/homeScreen.js';
 import currentStockScreen from '../screens/currentStockScreen.js';
 import map from '../screens/map.js';
-import userAccountScreen from '../screens/userAccountScreen.js';
 import salesDetailsScreen from '../screens/salesDetailsScreen.js';
 import shopDetailsScreen from '../screens/shopDetailsScreen.js';
 import cashDrawerScreen from '../screens/cashDrawerScreen.js';
