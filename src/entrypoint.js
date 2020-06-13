@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { ActivityIndicator } from 'react-native';
+import 'react-native-gesture-handler'
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/es/integration/react';
 import Navigator from './navigation/initialNavigation';
