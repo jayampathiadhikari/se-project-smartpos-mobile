@@ -13,15 +13,23 @@ class RoutesScreen extends Component {
   componentDidMount = async () => {
     const res = await getRoutesForSalesperson(this.props.user.uid);
     if(res.success){
+      const sortedRoutes = this.sortbyDayId(res.data)
       console.log(res.data);
       this.setState({
-        routes: res.data
+        routes: sortedRoutes
       });
     }else{
       console.log('ERROR FETCHING');
     }
   };
 
+  sortbyDayId=(routes)=>{
+      return routes.sort(function sortById(a, b) {
+        return b.day_id < a.day_id ? 1
+            : b.day_id > a.day_id ? -1
+                : 0;
+      });
+  }
   static navigationOptions = ({navigation}) => {
     // const{ params} = navigation.state;
     return {
@@ -37,7 +45,7 @@ class RoutesScreen extends Component {
                             route_id: route.route_id,
                             route_name: route.route_name
                           })}>
-          <Text style={styles.text}>{'Day ' + route.route_id + ' :  ' + route.route_name}</Text>
+          <Text style={styles.text}>{'Week ' + route.week + ' ('+route.day+') : ' + route.route_name}</Text>
         </TouchableOpacity>
 
       );
@@ -89,7 +97,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#474747',
     padding: 12,
     borderRadius: 5,
-    width: 280,
+    width: 350,
     marginTop: 12,
   },
 
