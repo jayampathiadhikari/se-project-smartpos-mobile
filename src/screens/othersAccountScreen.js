@@ -1,11 +1,13 @@
-import React, {Component} from 'react';
-import { StyleSheet, View, Image, Text, FlatList } from 'react-native';
-import { Card, FAB, Button } from 'react-native-paper';
+import React from 'react';
+import { StyleSheet, View, Image, Text } from 'react-native';
+import { Card } from 'react-native-paper';
 import {connect} from "react-redux";
 import {showOtherUsers} from "../Utils";
 import storage from '@react-native-firebase/storage';
 
 class othersAccountScreen extends React.Component {
+
+    _isMounted=false;
 
     constructor(props){
         super(props)
@@ -16,12 +18,23 @@ class othersAccountScreen extends React.Component {
         }
     }
     async componentDidMount() {
+        this._isMounted=true;
         const salesperson = await showOtherUsers(this.props.user.supervisorUid);
-        this.setState({
-            salespersonData: salesperson,
-        });
-        const url =await storage().ref('images/salesp@mailcupp.com').getDownloadURL()
-        .then(url => {this.setState({picture: url});}).catch(e=>{console.log(e);});
+        if(this._isMounted){
+            this.setState({
+                salespersonData: salesperson,
+            });
+        }
+        await storage().ref('images/salesp@mailcupp.com').getDownloadURL()
+        .then(url => {
+            if(this._isMounted){
+                this.setState({picture: url});
+            }
+        }).catch(e=>{console.log(e);});
+    }
+
+    componentWillUnmount() {
+        this._isMounted=false;
     }
 
     render () {

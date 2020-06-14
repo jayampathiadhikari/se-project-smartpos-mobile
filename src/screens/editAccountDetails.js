@@ -1,13 +1,15 @@
-import React, {Component, useState} from 'react';
-import { StyleSheet, View, Text, Modal, Alert, KeyboardAvoidingView } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, Modal, Alert, KeyboardAvoidingView } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import {connect} from 'react-redux';
-import {updateUser} from "../Utils";
+import {updateUser,getUser} from "../Utils";
 import storage from '@react-native-firebase/storage';
+import {setUser} from "../store/reducers/authentication/action";
 
 class editAccountDetails extends React.Component {
+    _isMounted=false
 
     constructor(props) {
       super(props);
@@ -23,7 +25,15 @@ class editAccountDetails extends React.Component {
       }
     }
 
-        pickFromGallery = async (imgName) => {
+    componentDidMount() {
+        this._isMounted=true;
+    }
+
+    componentWillUnmount() {
+        this._isMounted=false;
+    }
+
+    pickFromGallery = async (imgName) => {
             const {granted} = await Permissions.askAsync(Permissions.CAMERA_ROLL)
             if (granted){
                 let data = await ImagePicker.launchImageLibraryAsync({
@@ -85,7 +95,7 @@ class editAccountDetails extends React.Component {
         }
 
         setFirstName=(text)=>{
-            if (text == ""){
+            if (text === ""){
                 Alert.alert("First Name should not be empty.");
             }
             if(text.match(/^[a-zA-Z]*$/)){
@@ -95,7 +105,7 @@ class editAccountDetails extends React.Component {
             }
         }
         setLastName=(text)=>{
-            if (text == ""){
+            if (text === ""){
                 Alert.alert("Last Name should not be empty.");
             }
             if(text.match(/^[a-zA-Z]*$/)){
@@ -108,7 +118,7 @@ class editAccountDetails extends React.Component {
             this.setState({address:text});
         }
         setPhone=(text)=>{
-            if (text == ""){
+            if (text === ""){
                 Alert.alert("Phone number should not be empty.");
             }
             if(text.match(/^[0-9]*$/)){
@@ -137,15 +147,42 @@ class editAccountDetails extends React.Component {
             this.setState({enableShift:false});
         }
         saveEdits(saveUid, saveFirstName, saveLastName, saveAddress, savePhoneNumber, saveImageUri){
-            if (saveFirstName == "" || saveLastName == "" || saveAddress == "" || savePhoneNumber == ""){
+            if (saveFirstName === "" || saveLastName === "" || saveAddress === "" || savePhoneNumber === ""){
                 Alert.alert("Please fill all the fields.");
             }else{
                 updateUser(saveUid, saveFirstName, saveLastName, saveAddress, savePhoneNumber, saveImageUri)
-                .then(() => {
-                        this.props.navigation.navigate("AccountHome");
-                })
+                    .then(async () => {
+                       getUser(this.props.user.email).then(
+                           (data)=>{
+                               if(this._isMounted && data.user!==null){
+                                   this.props.setUser(data.user);
+                                   console.log("Document successfully written!");
+                                   this.props.navigation.navigate("AccountHome");
+                                   Alert.alert('Successfully Updated!');
+                               }else{
+                                   Alert.alert('Error occured.Try Again! ')
+                               }
+
+                           }
+                       ).catch((err)=>{
+                           console.log(err);
+                           Alert.alert('Error occured . Try Again ! ')
+                       })
+                    }).catch(err=>{
+                    if(this._isMounted){
+                        console.log('Error : 1', err);
+                        Alert.alert('Error occured.Try Again!')
+                    }})
             }
+
         }
+
+    // updateStore=async()=>{
+    //     const userData=await getUser(this.props.user.email);
+    //     this.props.setUser(userData.user);
+    //
+    // }
+
 
     render(){
         return (
@@ -192,7 +229,7 @@ class editAccountDetails extends React.Component {
                     mode="outlined"
                     onChangeText={(text)=>{this.setPhone(text)}}
                 />
-                <Button style={styles.inputStyle} icon={this.state.picture==""?"upload":"check"} mode="contained" theme={theme} onPress={() => this.setModalTrue()}>
+                <Button style={styles.inputStyle} icon={this.state.picture===""?"upload":"check"} mode="contained" theme={theme} onPress={() => this.setModalTrue()}>
                     Upload Image
                 </Button>
                 <Button style={styles.inputStyle} icon="content-save" mode="contained" theme={theme} onPress={() =>this.saveEdits (this.props.user.uid, this.state.firstName, this.state.lastName, this.state.address, this.state.phoneNumber, this.state.imageUri)}>
@@ -251,7 +288,7 @@ const mapStateToProps = (state) => ({
 });
 
 const bindAction = (dispatch) => ({
-
+    setUser : (user)=>dispatch(setUser(user))
 });
 
 export default connect(

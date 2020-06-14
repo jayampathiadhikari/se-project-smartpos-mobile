@@ -25,7 +25,9 @@ export class StockScreen extends Component {
     }
 
     getStockDetails = () => {
-        this.setState({onceFetched: true});
+        if(this._isMounted){
+            this.setState({onceFetched: true});
+        }
         axios.post("https://se-smartpos-backend.herokuapp.com/api/v1/stock/viewsalespersonstock",
             {salesperson_id: this.props.user.uid})
             .then((response) => {
@@ -39,8 +41,9 @@ export class StockScreen extends Component {
     };
 
     componentWillUnmount() {
-      clearInterval(this.intervalID);
-      this._isMounted=false;
+        this._isMounted=false;
+        clearInterval(this.intervalID);
+
     }
 
 

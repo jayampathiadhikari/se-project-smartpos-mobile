@@ -88,6 +88,9 @@ export default class SalesDetails extends Component {
         this.setState({tableData:Top.concat(Res),amountReceived: 0})
     }
 
+    numberWithCommas=(x)=> {
+        return (x=x+'').replace(new RegExp('\\B(?=(\\d{3})+'+(~x.indexOf('.')?'\\.':'$')+')','g'),',');
+    }
 
     updateDatabasePaidAmount = (invoice_id, amountReceived) => {
         axios.put("https://se-smartpos-backend.herokuapp.com/api/v1/invoice/updateinvoicepaidamount",
@@ -197,7 +200,7 @@ export default class SalesDetails extends Component {
                   onPress={() => {
                       this.openDueAmountModal(invoice)
                   }}>
-                        <Text style={{color: '#fff', fontWeight: 'bold'}}>{'Rs. ' + invoice.due}</Text>
+                        <Text style={{color: '#fff', fontWeight: 'bold'}}>{'Rs. ' + this.numberWithCommas(invoice.due)}</Text>
                     </TouchableOpacity>
                 );
             }
@@ -238,7 +241,7 @@ export default class SalesDetails extends Component {
                                 <TableWrapper key={index} style={styles.row}>
                                     <Cell key={0} data={rowData.id} textStyle={styles.text}/>
                                     <Cell key={1} data={rowData.date} textStyle={styles.text}/>
-                                    <Cell key={2} data={'Rs. ' + rowData.total} textStyle={styles.text}/>
+                                    <Cell key={2} data={'Rs. ' + this.numberWithCommas(rowData.total)} textStyle={styles.text}/>
                                     <Cell key={3} data={element(index, rowData)}/>
                                 </TableWrapper>
                             ))

@@ -1243,6 +1243,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-firebase/storage/-/storage-7.1.4.tgz#1be6c53381440dc1ad4b5252e14b06cded37d637"
   integrity sha512-o4II2QQJEBqYTyiQe03qtLDsdzCKcCV/EFn323JGNa8w+NCBM/6LstkCUmFnwfrO5Lb9Pyb5Jixpwjwe0n+UvQ==
 
+"@react-native-firebase/storage@6.3.4":
+  version "6.3.4"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/storage/-/storage-6.3.4.tgz#777d0a995738e07a2ed1769a347ac3b894ad510f"
+  integrity sha512-7UtDycS5Buj4wY2w4lOSi2LMsfXxkR58+z6ZhbdHKRr39HhA4g0rOi5CDi3TtOW2LzpldzKEKWvvRTkVcAjtjA==
+
 "@react-native-mapbox-gl/maps@^8.0.0-rc3":
   version "8.0.0-rc3"
   resolved "https://registry.yarnpkg.com/@react-native-mapbox-gl/maps/-/maps-8.0.0-rc3.tgz#b3d449da02f3aa3c6d5b93af19af2e7abb90a616"

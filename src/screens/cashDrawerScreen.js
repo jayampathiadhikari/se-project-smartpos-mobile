@@ -17,6 +17,11 @@ export default class cashDrawersScreen extends React.Component {
         this.interval = setInterval(this.getInvoiceDetails, 10000);
     };
 
+    numberWithCommas=(x)=> {
+        return (x=x+'').replace(new RegExp('\\B(?=(\\d{3})+'+(~x.indexOf('.')?'\\.':'$')+')','g'),',');
+    }
+
+
     getInvoiceDetails=()=>{
              axios.post("https://se-smartpos-backend.herokuapp.com/api/v1/invoice/viewallinvoices",
              {shop_id:this.props.navigation.getParam('shop_id')})
@@ -44,9 +49,9 @@ export default class cashDrawersScreen extends React.Component {
     const state=this.state;
     const element = ()=>{
          if (this.state.dueAmount === 0 ){
-            return <Button title={'Rs. '+state.dueAmount} buttonStyle={{...styles.button,backgroundColor: '#0a5a00' }} titleStyle={styles.buttonText} onPress={()=>{}}/>
+            return <Button title={'Rs. '+this.numberWithCommas(state.dueAmount)} buttonStyle={{...styles.button,backgroundColor: '#0a5a00' }} titleStyle={styles.buttonText} onPress={()=>{}}/>
          }else{
-            return <Button title={'Rs. '+state.dueAmount} buttonStyle={{...styles.button,backgroundColor: '#af0810'}} titleStyle={styles.buttonText} onPress={()=>{}} />
+            return <Button title={'Rs. '+this.numberWithCommas(state.dueAmount)} buttonStyle={{...styles.button,backgroundColor: '#af0810'}} titleStyle={styles.buttonText} onPress={()=>{}} />
 
          }
     }

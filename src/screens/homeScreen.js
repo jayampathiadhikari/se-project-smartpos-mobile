@@ -12,9 +12,9 @@ class HomeScreen extends Component {
 
     state = {
         entryCreated: 1,
-        dailyTarget: 'None',
+        dailyTarget: 0,
         modalVisible: false,
-        achievedTarget: 'None'
+        achievedTarget: 0
     };
 
     componentDidMount() {
@@ -34,7 +34,7 @@ class HomeScreen extends Component {
                 if (response.data.success){
                     const target = response.data.data.target_value;
                     if (Number.isInteger(target)) {
-                        this.setState({dailyTarget: 'Rs. ' + target});
+                        this.setState({dailyTarget: target});
                     }
                 }else{
                     console.log(response.data.error)
@@ -45,6 +45,9 @@ class HomeScreen extends Component {
                 console.log(error);
             });
     };
+    numberWithCommas=(x)=> {
+        return (x=x+'').replace(new RegExp('\\B(?=(\\d{3})+'+(~x.indexOf('.')?'\\.':'$')+')','g'),',');
+    }
 
     getTargetAchieved() {
         axios.post("https://se-smartpos-backend.herokuapp.com/api/v1/salesperson/gettargetachieved",{salesperson_id: this.props.user.uid})
@@ -52,7 +55,7 @@ class HomeScreen extends Component {
                 if (response.data.success){
                     const targetAchieved = response.data.data.target_achieved;
                     if (Number.isInteger(targetAchieved)) {
-                        this.setState({achievedTarget: 'Rs. ' + targetAchieved});
+                        this.setState({achievedTarget:  targetAchieved});
                     }
                 }else{
                     console.log(response.data.error)
@@ -197,13 +200,13 @@ class HomeScreen extends Component {
                                 ...modalstyles.modalText,
                                 color: 'red',
                                 fontWeight: 'bold'
-                            }}> {this.state.dailyTarget}</Text>
+                            }}>Rs. {this.numberWithCommas(this.state.dailyTarget)}</Text>
                             <Text style={modalstyles.modalText}> Target achieved : </Text>
                             <Text style={{
                                 ...modalstyles.modalText,
                                 color: 'green',
                                 fontWeight: 'bold'
-                            }}> {this.state.achievedTarget}</Text>
+                            }}> Rs. {this.numberWithCommas(this.state.achievedTarget)}</Text>
                             <Button title='Back' buttonStyle={modalstyles.closeButton} onPress={() => {
                                 this.closeModal();
                             }}/>

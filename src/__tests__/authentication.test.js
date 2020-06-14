@@ -1,6 +1,6 @@
-import {setUser} from "./action";
-import {AuthenticationReducer} from './reducer';
-import * as types from "../constant";
+import {setUser} from "../store/reducers/authentication/action";
+import {AuthenticationReducer} from '../store/reducers/authentication/reducer';
+import * as types from "../store/reducers/constant";
 
 describe ('Authentication actions',()=>{
     it ('should create an action to set user',()=>{
