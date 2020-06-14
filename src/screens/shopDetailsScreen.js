@@ -1,6 +1,8 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet, Linking, Platform} from 'react-native';
+import {View, Text, Image, StyleSheet, Linking, Platform, Alert} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import Icon from "react-native-vector-icons/FontAwesome";
+import {Button} from "react-native-elements";
 
 const axios = require('axios');
 
@@ -40,6 +42,10 @@ export default class ShopDetailsScreen extends React.Component {
 
     }
 
+    displayInfo = () => {
+        Alert.alert("Info", "Press on the contact numbers to make a direct call." )
+    }
+
     render() {
         const state = this.state;
 
@@ -56,6 +62,15 @@ export default class ShopDetailsScreen extends React.Component {
                     colors={["#000000", "#DCDCDC"]}
                     style={{height: 120}}
                 />
+                <Button icon={
+                    <Icon
+                        name="info"
+                        size={20}
+                        color="black"
+                    />
+                } buttonStyle={styles.infoButton} onPress={() => {
+                    this.displayInfo()
+                }}/>
                 <View style={styles.imageContainer}>
                     <Image style={styles.image} source={require('../assets/logo-pos-600.png')}/>
                 </View>
@@ -88,6 +103,15 @@ const styles = StyleSheet.create({
     },
     imageContainer: {
         alignItems: "center"
+    },
+    infoButton: {
+        marginTop: -100,
+        borderRadius: 25,
+        marginRight: 15,
+        padding: 20,
+        height: 30,
+        alignSelf: 'flex-end',
+        backgroundColor: "#fff"
     },
     textContainer: {
         alignItems: "center"
