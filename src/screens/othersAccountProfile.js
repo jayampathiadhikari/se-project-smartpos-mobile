@@ -4,23 +4,11 @@ import {Title, Card, Button} from 'react-native-paper';
 import * as Permissions from 'expo-permissions';
 import {LinearGradient} from 'expo-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import storage from '@react-native-firebase/storage';
 
 export default class othersAccountProfile extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            picture: ""
-        }
-    }
-
-    async componentDidMount() {
-        const url = await storage()
-            .ref('images/'+this.props.navigation.getParam('email'))
-            .getDownloadURL()
-            .then(url => {this.setState({picture: url});})
-            .catch(e=>{console.log(e);});
     }
 
     openDial () {
@@ -32,7 +20,6 @@ export default class othersAccountProfile extends React.Component {
         }
 
     static navigationOptions = ({navigation}) => {
-            // const{ params} = navigation.state;
             return {
               title: "Others",
             };

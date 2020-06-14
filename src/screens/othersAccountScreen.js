@@ -3,7 +3,6 @@ import { StyleSheet, View, Image, Text } from 'react-native';
 import { Card } from 'react-native-paper';
 import {connect} from "react-redux";
 import {showOtherUsers} from "../Utils";
-import storage from '@react-native-firebase/storage';
 
 class othersAccountScreen extends React.Component {
 
