@@ -32,7 +32,7 @@ class Login extends React.Component{
         // console.log(result,'TOKEN RESULT')
         if(result.data.success) {
           this.props.setToken('Bearer ' + result.data.data[0].token);
-          console.log(result, 'GET TOKEN');
+          // console.log(result, 'GET TOKEN');
           this.props.navigation.navigate('Home')
         }else{
           console.log('auth error');
