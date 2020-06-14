@@ -30,6 +30,10 @@ export default class Invoice extends Component {
         return ((this.calSubTotal())-(this.calDiscounts(discount)));
   }
 
+    numberWithCommas=(x)=> {
+        return (x=x+'').replace(new RegExp('\\B(?=(\\d{3})+'+(~x.indexOf('.')?'\\.':'$')+')','g'),',');
+    }
+
   render() {
     const data=this.props.data;
     return (
@@ -53,16 +57,16 @@ export default class Invoice extends Component {
                 data.products.filter((item)=>{return item.quantity !== 0;}).map((rowData, index) => (
                     <TableWrapper key={index} style={styles.row}>
                         <Cell key={0} data={rowData.name} textStyle={styles.text}/>
-                        <Cell key={1} data={rowData.price+'.00'} textStyle={styles.text}/>
+                        <Cell key={1} data={this.numberWithCommas(rowData.price)+'.00'} textStyle={styles.text}/>
                         <Cell key={2} data={rowData.quantity } textStyle={styles.text}/>
-                        <Cell key={3} data={(rowData.quantity*rowData.price)+'.00'} textStyle={styles.text}/>
+                        <Cell key={3} data={this.numberWithCommas(rowData.quantity*rowData.price)+'.00'} textStyle={styles.text}/>
                     </TableWrapper>
                 ))
               }
                 </Table>
-                <Text style={{...styles.textInfoBottom,marginTop:10}}> Sub Total   :  {this.calSubTotal()+'.00'}</Text>
-                <Text style={styles.textInfoBottom}> Discounts   : {this.calDiscounts(data.discount)+'.00'}</Text>
-                <Text style={{...styles.textInfoBottom,marginTop:15}}>TOTAL   :    Rs.{this.calTotal(data.discount)+'.00'}</Text>
+                <Text style={{...styles.textInfoBottom,marginTop:10}}> Sub Total   :  {this.numberWithCommas(this.calSubTotal())+'.00'}</Text>
+                <Text style={styles.textInfoBottom}> Discounts   : {this.numberWithCommas(this.calDiscounts(data.discount))+'.00'}</Text>
+                <Text style={{...styles.textInfoBottom,marginTop:15}}>TOTAL   :    Rs.{this.numberWithCommas(this.calTotal(data.discount))+'.00'}</Text>
             </ViewShot>
         </ScrollView>
     );

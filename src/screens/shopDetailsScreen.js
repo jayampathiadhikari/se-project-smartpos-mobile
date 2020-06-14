@@ -43,7 +43,7 @@ export default class ShopDetailsScreen extends React.Component {
     }
 
     displayInfo = () => {
-        Alert.alert("Info", "Press on the contact numbers to make a direct call." )
+        Alert.alert("Info", "Touch the text of contact numbers in order to make a direct call." )
     }
 
     render() {
