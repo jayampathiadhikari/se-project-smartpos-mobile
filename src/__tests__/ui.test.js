@@ -1,6 +1,6 @@
-import {setShopDetails} from "./action";
-import {uiReducer} from './reducer';
-import * as types from "../constant";
+import {setShopDetails} from "../store/reducers/ui/action";
+import {uiReducer} from '../store/reducers/ui/reducer';
+import * as types from "../store/reducers/constant";
 
 describe ('ui actions',()=>{
     it ('should create an action to set shop details',()=>{
