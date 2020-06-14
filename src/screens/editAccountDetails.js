@@ -95,16 +95,37 @@ class editAccountDetails extends React.Component {
         }
 
         setFirstName=(text)=>{
-            this.setState({firstName:text});
+            if (text === ""){
+                Alert.alert("First Name should not be empty.");
+            }
+            if(text.match(/^[a-zA-Z]*$/)){
+                this.setState({firstName:text});
+            } else {
+                Alert.alert("First Name should only contain alphabetic letters.");
+            }
         }
         setLastName=(text)=>{
-            this.setState({lastName:text});
+            if (text === ""){
+                Alert.alert("Last Name should not be empty.");
+            }
+            if(text.match(/^[a-zA-Z]*$/)){
+                this.setState({lastName:text});
+            } else {
+                Alert.alert("Last Name should only contain alphabetic letters.");
+            }
         }
         setAddress=(text)=>{
             this.setState({address:text});
         }
         setPhone=(text)=>{
-            this.setState({phoneNumber:text});
+            if (text === ""){
+                Alert.alert("Phone number should not be empty.");
+            }
+            if(text.match(/^[0-9]*$/)){
+                this.setState({phoneNumber:text});
+            } else {
+                Alert.alert("Phone number should only contain numbers.");
+            }
         }
         setPicture=(text)=>{
             this.setState({picture:text});
@@ -126,35 +147,42 @@ class editAccountDetails extends React.Component {
             this.setState({enableShift:false});
         }
         saveEdits(saveUid, saveFirstName, saveLastName, saveAddress, savePhoneNumber, saveImageUri){
-            updateUser(saveUid, saveFirstName, saveLastName, saveAddress, savePhoneNumber, saveImageUri)
-            .then(async () => {
-                    this.updateStore()
-                    .then(()=>{
-                        this.props.navigation.navigate("AccountHome");
-                        if(this._isMounted){
-                            console.log("Document successfully written!");
-                            Alert.alert('Successfully Updated!');
-                        }}
-                    ).catch(()=>{
-                        if (this._isMounted){
-                            Alert.alert('Error occured.Try Again !')}
-                        }
+            if (saveFirstName === "" || saveLastName === "" || saveAddress === "" || savePhoneNumber === ""){
+                Alert.alert("Please fill all the fields.");
+            }else{
+                updateUser(saveUid, saveFirstName, saveLastName, saveAddress, savePhoneNumber, saveImageUri)
+                    .then(async () => {
+                       getUser(this.props.user.email).then(
+                           (data)=>{
+                               if(this._isMounted && data.user!==null){
+                                   this.props.setUser(data.user);
+                                   console.log("Document successfully written!");
+                                   this.props.navigation.navigate("AccountHome");
+                                   Alert.alert('Successfully Updated!');
+                               }else{
+                                   Alert.alert('Error occured.Try Again! ')
+                               }
 
-                    )
+                           }
+                       ).catch((err)=>{
+                           console.log(err);
+                           Alert.alert('Error occured . Try Again ! ')
+                       })
+                    }).catch(err=>{
+                    if(this._isMounted){
+                        console.log('Error : 1', err);
+                        Alert.alert('Error occured.Try Again!')
+                    }})
+            }
 
-
-            }).catch(err=>{
-                if(this._isMounted){
-                    console.log(error);
-                    Alert.alert('Error occured.Try Again!')
-                }})
         }
 
-        updateStore=async()=>{
-            const userData=await getUser(this.props.user.email);
-            this.props.setUser(userData.user);
+    // updateStore=async()=>{
+    //     const userData=await getUser(this.props.user.email);
+    //     this.props.setUser(userData.user);
+    //
+    // }
 
-        }
 
     render(){
         return (
@@ -201,7 +229,7 @@ class editAccountDetails extends React.Component {
                     mode="outlined"
                     onChangeText={(text)=>{this.setPhone(text)}}
                 />
-                <Button style={styles.inputStyle} icon={this.state.picture==""?"upload":"check"} mode="contained" theme={theme} onPress={() => this.setModalTrue()}>
+                <Button style={styles.inputStyle} icon={this.state.picture===""?"upload":"check"} mode="contained" theme={theme} onPress={() => this.setModalTrue()}>
                     Upload Image
                 </Button>
                 <Button style={styles.inputStyle} icon="content-save" mode="contained" theme={theme} onPress={() =>this.saveEdits (this.props.user.uid, this.state.firstName, this.state.lastName, this.state.address, this.state.phoneNumber, this.state.imageUri)}>
@@ -260,7 +288,7 @@ const mapStateToProps = (state) => ({
 });
 
 const bindAction = (dispatch) => ({
-    setUser : (user)=>{dispatch(setUser(user))}
+    setUser : (user)=>dispatch(setUser(user))
 });
 
 export default connect(

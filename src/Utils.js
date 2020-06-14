@@ -79,8 +79,7 @@ export const checkAuthentication = (email, password) => {
 export const getUser = async(email)=>{
   const userQueryRef = firestore().collection('users').where('email', '==', email);
   const userQuerySnapshot = await userQueryRef.get();
-  const type = userQuerySnapshot.docs[0].data().type;
-  console.log(userQuerySnapshot.docs[0].data(), 'USER DATA AFRA');
+  // console.log(userQuerySnapshot.docs[0].data(), 'USER DATA );
   return { user: userQuerySnapshot.docs[0].data()}
 }
 
