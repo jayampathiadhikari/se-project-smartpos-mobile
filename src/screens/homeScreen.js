@@ -18,11 +18,12 @@ class HomeScreen extends Component {
     };
 
     componentDidMount() {
+        console.log(this.requestLocation());
         console.log(this.props.user.email, 'USER');
         this.getDailyTarget();
         this.getTargetAchieved();
-        this.getInitialPosition();
-        this.watchMovement();
+        // this.getInitialPosition();
+        // this.watchMovement();
 
         // this.watchFirestore();
     };
@@ -132,6 +133,7 @@ class HomeScreen extends Component {
     };
 
     async requestLocationPermission() {
+        console.log('ASKING FOR PERMISION');
         try {
             const granted = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
@@ -148,7 +150,7 @@ class HomeScreen extends Component {
                 console.log('You can use the location');
                 return true;
             } else {
-                console.log('You can use the location');
+                console.log('YOU CANNOT USE LOCATION');
                 return false;
             }
 
@@ -157,6 +159,27 @@ class HomeScreen extends Component {
         }
     };
 
+    requestLocation = () => {
+        var permissions = [
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
+        ];
+
+        try {
+               PermissionsAndroid.requestMultiple(permissions).then(result => {
+                if(result['android.permission.ACCESS_COARSE_LOCATION'] === "granted" && result['android.permission.ACCESS_FINE_LOCATION'] === 'granted'){
+                    console.log('access granted')
+                    this.watchMovement();
+                }else{
+                    console.log('no access')
+                    return(false)
+                }
+            });
+
+        } catch (err) {
+            console.warn(err);
+        }
+    };
 
     openModal = async () => {
         try {
